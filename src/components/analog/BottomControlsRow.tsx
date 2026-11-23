@@ -3,9 +3,17 @@
 import React, { useState } from 'react';
 import { Music2, Sliders, BarChart2, Plus, Guitar, BellRing, ChevronDown, Trash2 } from 'lucide-react';
 import { AudioSettings, ChordMode } from '@/types/strum';
+import { ALL_CHORDS, CHORD_LIBRARY } from '@/constants/chords';
 import { ToggleSwitch } from './ToggleSwitch';
 
-const ALL_CHORDS = ['G', 'C', 'D', 'Em', 'Am', 'E', 'A', 'F', 'Dm'];
+const CHORD_GROUPS: Record<string, string[]> = {
+  Essential: ['G', 'C', 'D', 'Em', 'Am', 'E', 'A', 'F', 'Dm', 'Bm'],
+  Major: ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'Cadd9', 'Cmaj7', 'Fmaj7', 'Gmaj7'],
+  Minor: ['Am', 'Bm', 'Dm', 'Em', 'F#m'],
+  '7th': ['A7', 'B7', 'C7', 'D7', 'E7', 'G7', 'Am7', 'Dm7', 'Em7'],
+  'Sus/Add': ['Dsus4', 'Dsus2', 'Asus4', 'Asus2', 'Cadd9'],
+  All: ALL_CHORDS,
+};
 
 interface BottomControlsRowProps {
   chordMode: ChordMode;
@@ -41,6 +49,7 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
   onCountInBeatsChange,
 }) => {
   const [editingBarIndex, setEditingBarIndex] = useState<number | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('Essential');
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch select-none min-w-0">
@@ -94,16 +103,35 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
 
         {/* Content based on selected mode */}
         {chordMode === 'single' ? (
-          /* Single Chord Quick Selector */
-          <div className="space-y-2.5 py-0.5">
-            <div className="grid grid-cols-5 sm:grid-cols-9 gap-1.5">
-              {ALL_CHORDS.map((ch) => {
+          /* Single Chord Quick Selector with Category Filter */
+          <div className="space-y-2 py-0.5">
+            {/* Category Filter Pills */}
+            <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar pb-0.5">
+              {Object.keys(CHORD_GROUPS).map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-2 py-0.5 rounded-md font-mono text-[10px] font-bold transition shrink-0 cursor-pointer ${
+                    selectedCategory === cat
+                      ? 'bg-analog-primary text-white shadow-2xs'
+                      : 'bg-analog-bg/70 text-analog-secondary hover:text-analog-primary border border-analog-border/50'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Chords Grid */}
+            <div className="grid grid-cols-5 sm:grid-cols-10 gap-1.5 max-h-[72px] overflow-y-auto no-scrollbar py-0.5">
+              {CHORD_GROUPS[selectedCategory].map((ch) => {
                 const isSelected = singleChord === ch;
                 return (
                   <button
                     key={ch}
                     onClick={() => onSelectSingleChord(ch)}
-                    className={`py-2 px-1 rounded-xl font-display text-xs font-bold transition flex flex-col items-center justify-center cursor-pointer ${
+                    className={`py-1.5 px-1 rounded-xl font-display text-xs font-bold transition flex flex-col items-center justify-center cursor-pointer ${
                       isSelected
                         ? 'bg-analog-accent text-white shadow-sm ring-2 ring-analog-accent/40 scale-105 font-black'
                         : 'bg-analog-elevated/70 border border-analog-border text-analog-primary hover:border-analog-secondary'
@@ -152,30 +180,35 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
 
                       {/* Dropdown to change chord for this bar */}
                       {isEditing && (
-                        <div className="absolute top-full left-0 mt-1.5 z-30 p-1.5 bg-analog-surface border border-analog-border rounded-xl shadow-lg grid grid-cols-3 gap-1 w-36">
-                          {ALL_CHORDS.map((ch) => (
-                            <button
-                              key={ch}
-                              onClick={() => {
-                                onChordChange(idx, ch);
-                                setEditingBarIndex(null);
-                              }}
-                              className={`p-1.5 rounded-lg text-xs font-display font-bold text-center transition cursor-pointer ${
-                                chord === ch
-                                  ? 'bg-analog-accent text-white'
-                                  : 'hover:bg-analog-elevated text-analog-primary'
-                              }`}
-                            >
-                              {ch}
-                            </button>
-                          ))}
+                        <div className="absolute top-full left-0 mt-1.5 z-40 p-2 bg-analog-surface border border-analog-border rounded-xl shadow-xl w-60 max-h-56 overflow-y-auto no-scrollbar">
+                          <div className="text-[10px] font-mono text-analog-secondary uppercase tracking-wider mb-1 px-0.5 font-bold">
+                            Select Chord for Bar {idx + 1}
+                          </div>
+                          <div className="grid grid-cols-4 gap-1">
+                            {ALL_CHORDS.map((ch) => (
+                              <button
+                                key={ch}
+                                onClick={() => {
+                                  onChordChange(idx, ch);
+                                  setEditingBarIndex(null);
+                                }}
+                                className={`py-1.5 px-1 rounded-lg text-xs font-display font-bold text-center transition cursor-pointer ${
+                                  chord === ch
+                                    ? 'bg-analog-accent text-white shadow-xs'
+                                    : 'hover:bg-analog-elevated bg-analog-bg/60 border border-analog-border/50 text-analog-primary'
+                                }`}
+                              >
+                                {ch}
+                              </button>
+                            ))}
+                          </div>
                           {progression.length > 1 && onRemoveBar && (
                             <button
                               onClick={() => {
                                 onRemoveBar(idx);
                                 setEditingBarIndex(null);
                               }}
-                              className="col-span-3 mt-1 pt-1 border-t border-analog-border text-[10px] text-analog-accent hover:underline flex items-center justify-center gap-1 cursor-pointer"
+                              className="w-full mt-2 pt-1.5 border-t border-analog-border text-[10px] text-analog-accent hover:underline flex items-center justify-center gap-1 cursor-pointer font-bold"
                             >
                               <Trash2 className="w-3 h-3" />
                               <span>Remove Bar</span>
@@ -223,18 +256,19 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
           <h3 className="font-display text-sm font-bold tracking-tight">Audio Mix</h3>
         </div>
 
-        <div className="space-y-2.5">
+        <div className="space-y-3 py-1">
           {/* Channel 1: Guitar Acoustics */}
-          <div className="p-2.5 sm:p-3 rounded-xl bg-analog-bg/60 border border-analog-border/70 space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Guitar className="w-4 h-4 text-analog-secondary shrink-0" />
-                <span className="font-sans text-xs font-bold text-analog-primary">Guitar</span>
-              </div>
+          <div className="flex items-center space-x-2.5 sm:space-x-3 text-xs">
+            {/* Label column: fixed width of 90px ensures "Guitar" and "Metronome" never push the toggle */}
+            <div className="flex items-center space-x-1.5 w-[88px] sm:w-24 shrink-0">
+              <Guitar className="w-4 h-4 text-analog-secondary shrink-0" />
+              <span className="font-sans text-xs font-bold text-analog-primary truncate">Guitar</span>
+            </div>
 
-              {/* Orange Toggle Switch */}
+            {/* Tactile Toggle Switch */}
+            <div className="shrink-0">
               <ToggleSwitch
-                size="md"
+                size="sm"
                 checked={!audioSettings.isGuitarMuted}
                 onChange={(enabled) =>
                   onAudioSettingsChange({
@@ -246,42 +280,41 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
               />
             </div>
 
-            <div className="flex items-center space-x-2.5">
-              {/* Slider */}
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.01}
-                disabled={audioSettings.isGuitarMuted}
-                value={audioSettings.guitarVolume}
-                onChange={(e) =>
-                  onAudioSettingsChange({
-                    ...audioSettings,
-                    guitarVolume: parseFloat(e.target.value),
-                  })
-                }
-                className={`flex-1 h-1.5 rounded-lg appearance-none cursor-pointer bg-analog-border accent-analog-accent ${
-                  audioSettings.isGuitarMuted ? 'opacity-40' : ''
-                }`}
-              />
-              <span className="font-mono text-xs font-bold text-analog-secondary w-8 text-right shrink-0">
-                {audioSettings.isGuitarMuted ? '0%' : `${Math.round(audioSettings.guitarVolume * 100)}%`}
-              </span>
-            </div>
+            {/* Volume Fader */}
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.01}
+              disabled={audioSettings.isGuitarMuted}
+              value={audioSettings.guitarVolume}
+              onChange={(e) =>
+                onAudioSettingsChange({
+                  ...audioSettings,
+                  guitarVolume: parseFloat(e.target.value),
+                })
+              }
+              className={`flex-1 h-1.5 rounded-lg appearance-none cursor-pointer bg-analog-border accent-analog-accent min-w-[50px] ${
+                audioSettings.isGuitarMuted ? 'opacity-40' : ''
+              }`}
+            />
+            <span className="font-mono text-xs font-bold text-analog-secondary w-7 text-right shrink-0">
+              {audioSettings.isGuitarMuted ? '0%' : `${Math.round(audioSettings.guitarVolume * 100)}%`}
+            </span>
           </div>
 
           {/* Channel 2: Metronome Click */}
-          <div className="p-2.5 sm:p-3 rounded-xl bg-analog-bg/60 border border-analog-border/70 space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <BellRing className="w-4 h-4 text-analog-secondary shrink-0" />
-                <span className="font-sans text-xs font-bold text-analog-primary">Metronome</span>
-              </div>
+          <div className="flex items-center space-x-2.5 sm:space-x-3 text-xs">
+            {/* Label column: fixed width of 90px ensures "Metronome" (9 chars) NEVER collides with toggle */}
+            <div className="flex items-center space-x-1.5 w-[88px] sm:w-24 shrink-0">
+              <BellRing className="w-4 h-4 text-analog-secondary shrink-0" />
+              <span className="font-sans text-xs font-bold text-analog-primary truncate">Metronome</span>
+            </div>
 
-              {/* Orange Toggle Switch */}
+            {/* Tactile Toggle Switch */}
+            <div className="shrink-0">
               <ToggleSwitch
-                size="md"
+                size="sm"
                 checked={!audioSettings.isMetronomeMuted}
                 onChange={(enabled) =>
                   onAudioSettingsChange({
@@ -293,29 +326,27 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
               />
             </div>
 
-            <div className="flex items-center space-x-2.5">
-              {/* Slider */}
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.01}
-                disabled={audioSettings.isMetronomeMuted}
-                value={audioSettings.metronomeVolume}
-                onChange={(e) =>
-                  onAudioSettingsChange({
-                    ...audioSettings,
-                    metronomeVolume: parseFloat(e.target.value),
-                  })
-                }
-                className={`flex-1 h-1.5 rounded-lg appearance-none cursor-pointer bg-analog-border accent-analog-accent ${
-                  audioSettings.isMetronomeMuted ? 'opacity-40' : ''
-                }`}
-              />
-              <span className="font-mono text-xs font-bold text-analog-secondary w-8 text-right shrink-0">
-                {audioSettings.isMetronomeMuted ? '0%' : `${Math.round(audioSettings.metronomeVolume * 100)}%`}
-              </span>
-            </div>
+            {/* Volume Fader */}
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.01}
+              disabled={audioSettings.isMetronomeMuted}
+              value={audioSettings.metronomeVolume}
+              onChange={(e) =>
+                onAudioSettingsChange({
+                  ...audioSettings,
+                  metronomeVolume: parseFloat(e.target.value),
+                })
+              }
+              className={`flex-1 h-1.5 rounded-lg appearance-none cursor-pointer bg-analog-border accent-analog-accent min-w-[50px] ${
+                audioSettings.isMetronomeMuted ? 'opacity-40' : ''
+              }`}
+            />
+            <span className="font-mono text-xs font-bold text-analog-secondary w-7 text-right shrink-0">
+              {audioSettings.isMetronomeMuted ? '0%' : `${Math.round(audioSettings.metronomeVolume * 100)}%`}
+            </span>
           </div>
         </div>
       </div>
@@ -329,35 +360,41 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
           <h3 className="font-display text-sm font-bold tracking-tight">Count-In</h3>
         </div>
 
-        <div className="p-2.5 sm:p-3 rounded-xl bg-analog-bg/60 border border-analog-border/70 flex items-center justify-between gap-3">
-          {/* Beats Dropdown */}
-          <div className="relative flex-1 min-w-0">
-            <span className="font-mono text-[9px] text-analog-secondary uppercase block mb-1">Lead-In</span>
-            <select
-              value={countInBeats}
-              onChange={(e) => onCountInBeatsChange(Number(e.target.value) as 3 | 4)}
-              className="appearance-none w-full px-3 py-1.5 pr-6 rounded-lg bg-analog-bg border border-analog-border font-display text-xs font-bold text-analog-primary cursor-pointer truncate"
-            >
-              <option value={4}>4 Beats</option>
-              <option value={3}>3 Beats</option>
-            </select>
-            <ChevronDown className="w-3.5 h-3.5 text-analog-secondary absolute right-2 top-6 pointer-events-none" />
+        <div className="space-y-2 py-0.5">
+          <div className="flex items-center justify-between gap-3">
+            {/* Beats Dropdown */}
+            <div className="relative flex-1 min-w-0">
+              <span className="font-mono text-[9px] text-analog-secondary uppercase tracking-wider block mb-1">Lead-In</span>
+              <select
+                value={countInBeats}
+                onChange={(e) => onCountInBeatsChange(Number(e.target.value) as 3 | 4)}
+                className="appearance-none w-full px-3 py-1.5 pr-6 rounded-lg bg-analog-bg border border-analog-border font-display text-xs font-bold text-analog-primary cursor-pointer truncate"
+              >
+                <option value={4}>4 Beats</option>
+                <option value={3}>3 Beats</option>
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-analog-secondary absolute right-2 top-6 pointer-events-none" />
+            </div>
+
+            {/* Tactile Toggle Switch */}
+            <div className="flex flex-col items-center justify-center pt-3 shrink-0">
+              <ToggleSwitch
+                size="sm"
+                checked={audioSettings.countInEnabled}
+                onChange={(enabled) =>
+                  onAudioSettingsChange({
+                    ...audioSettings,
+                    countInEnabled: enabled,
+                  })
+                }
+                label={audioSettings.countInEnabled ? 'Disable Pre-Roll Count-In' : 'Enable Pre-Roll Count-In'}
+              />
+            </div>
           </div>
 
-          {/* Orange Toggle Switch */}
-          <div className="flex flex-col items-center justify-center pt-3">
-            <ToggleSwitch
-              size="md"
-              checked={audioSettings.countInEnabled}
-              onChange={(enabled) =>
-                onAudioSettingsChange({
-                  ...audioSettings,
-                  countInEnabled: enabled,
-                })
-              }
-              label={audioSettings.countInEnabled ? 'Disable Pre-Roll Count-In' : 'Enable Pre-Roll Count-In'}
-            />
-          </div>
+          <p className="font-sans text-[11px] text-analog-secondary px-0.5">
+            Pre-roll count before playback begins
+          </p>
         </div>
       </div>
     </div>

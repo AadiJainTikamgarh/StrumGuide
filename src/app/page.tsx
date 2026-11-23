@@ -14,7 +14,7 @@ import { SettingsView } from '@/components/views/SettingsView';
 import { StrumScheduler, TickEvent } from '@/audio/scheduler';
 import { SampleLoader } from '@/audio/SampleLoader';
 import { PRESET_PATTERNS, createEmptySlots } from '@/constants/presets';
-import { CHORD_LIBRARY } from '@/constants/chords';
+import { CHORD_LIBRARY, ALL_CHORDS } from '@/constants/chords';
 import { playGuitarStrum } from '@/audio/guitarSynth';
 import { getAudioContext } from '@/audio/audioContext';
 import {
@@ -28,7 +28,6 @@ import {
   ChordMode,
 } from '@/types/strum';
 
-const ALL_CHORDS = ['G', 'C', 'D', 'Em', 'Am', 'E', 'A', 'F', 'Dm'];
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<NavigationTab>('practice');

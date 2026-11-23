@@ -23,7 +23,7 @@ export const CurrentChordCard: React.FC<CurrentChordCardProps> = ({
   const chordDef: ChordDefinition = CHORD_LIBRARY[chordName] || CHORD_LIBRARY.G;
 
   return (
-    <div className="rounded-2xl border border-analog-border bg-analog-surface p-5 shadow-xs flex flex-col justify-between select-none h-full">
+    <div className="rounded-2xl border border-analog-border bg-analog-surface p-4 sm:p-5 shadow-xs flex flex-col select-none h-full">
       {/* Card Header */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center space-x-2 text-analog-primary">
@@ -37,18 +37,18 @@ export const CurrentChordCard: React.FC<CurrentChordCardProps> = ({
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-3 items-center">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 items-center flex-1 my-auto">
         {/* Left: Chord Name & Fretboard Diagram */}
-        <div className="flex flex-col items-center">
-          <span className="font-display text-2xl font-black text-analog-primary leading-none mb-1">
+        <div className="flex flex-col items-center justify-center">
+          <span className="font-display text-3xl font-black text-analog-primary leading-none mb-1.5">
             {chordName}
           </span>
 
-          <div className="relative flex items-center justify-between w-full">
+          <div className="relative flex items-center justify-between w-full max-w-[140px]">
             {/* Prev arrow */}
             <button
               onClick={onPrevChord}
-              className="p-0.5 rounded text-analog-secondary hover:text-analog-primary transition cursor-pointer"
+              className="p-1 rounded-lg hover:bg-analog-elevated text-analog-secondary hover:text-analog-primary transition cursor-pointer"
               title="Previous chord"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -57,7 +57,7 @@ export const CurrentChordCard: React.FC<CurrentChordCardProps> = ({
             {/* Mini Fretboard Grid with orange finger dots */}
             <div className="flex flex-col items-center py-0.5">
               {/* String markers */}
-              <div className="w-16 flex justify-between px-0.5 text-[7px] font-mono font-bold text-analog-secondary mb-0.5">
+              <div className="w-20 flex justify-between px-0.5 text-[8px] font-mono font-bold text-analog-secondary mb-0.5">
                 {chordDef.frets.map((f, i) => (
                   <span
                     key={i}
@@ -75,17 +75,17 @@ export const CurrentChordCard: React.FC<CurrentChordCardProps> = ({
               </div>
 
               {/* Nut */}
-              <div className="w-16 h-0.5 bg-analog-secondary/80 rounded-xs mb-0.5" />
+              <div className="w-20 h-1 bg-analog-primary/80 rounded-xs mb-0.5" />
 
               {/* 3 Frets */}
-              <div className="w-16 border-l border-r border-analog-secondary/70">
+              <div className="w-20 border-l border-r border-analog-secondary/70">
                 {[1, 2, 3].map((fret) => (
                   <div
                     key={fret}
-                    className="relative w-full h-3 border-b border-analog-border flex justify-between px-0.5 items-center"
+                    className="relative w-full h-3.5 border-b border-analog-border flex justify-between px-1 items-center"
                   >
                     {/* Strings */}
-                    <div className="absolute inset-x-0.5 inset-y-0 flex justify-between pointer-events-none">
+                    <div className="absolute inset-x-1 inset-y-0 flex justify-between pointer-events-none">
                       {[0, 1, 2, 3, 4, 5].map((str) => (
                         <div key={str} className="w-[1px] h-full bg-analog-border/70" />
                       ))}
@@ -93,11 +93,11 @@ export const CurrentChordCard: React.FC<CurrentChordCardProps> = ({
 
                     {/* Orange finger dots */}
                     {chordDef.frets.map((f, s) => {
-                      if (f !== fret) return <div key={s} className="w-1.5 h-1.5" />;
+                      if (f !== fret) return <div key={s} className="w-2 h-2" />;
                       return (
                         <div
                           key={s}
-                          className="relative z-10 w-2 h-2 rounded-full bg-analog-accent shadow-2xs"
+                          className="relative z-10 w-2.5 h-2.5 rounded-full bg-analog-accent shadow-xs"
                         />
                       );
                     })}
@@ -109,7 +109,7 @@ export const CurrentChordCard: React.FC<CurrentChordCardProps> = ({
             {/* Next arrow */}
             <button
               onClick={onNextChord}
-              className="p-0.5 rounded text-analog-secondary hover:text-analog-primary transition cursor-pointer"
+              className="p-1 rounded-lg hover:bg-analog-elevated text-analog-secondary hover:text-analog-primary transition cursor-pointer"
               title="Next chord"
             >
               <ChevronRight className="w-4 h-4" />
@@ -117,17 +117,17 @@ export const CurrentChordCard: React.FC<CurrentChordCardProps> = ({
           </div>
 
           {/* Pagination dots */}
-          <div className="flex items-center space-x-1 mt-1">
+          <div className="flex items-center space-x-1.5 mt-2">
             <span className="w-1.5 h-1.5 rounded-full bg-analog-accent" />
-            <span className="w-1 h-1 rounded-full bg-analog-border" />
-            <span className="w-1 h-1 rounded-full bg-analog-border" />
+            <span className="w-1.5 h-1.5 rounded-full bg-analog-border" />
+            <span className="w-1.5 h-1.5 rounded-full bg-analog-border" />
           </div>
         </div>
 
         {/* Right: Guitar Hand Photo Thumbnail Card */}
         <div
           onClick={() => onPlaySound && onPlaySound(chordName)}
-          className="relative rounded-xl overflow-hidden border border-analog-border aspect-4/3 bg-zinc-900 group cursor-pointer shadow-xs"
+          className="relative rounded-xl overflow-hidden border border-analog-border aspect-4/3 max-h-[130px] bg-zinc-900 group cursor-pointer shadow-xs my-auto"
           title="Click to audition acoustic chord"
         >
           {/* Guitar neck fretboard image */}
@@ -136,6 +136,10 @@ export const CurrentChordCard: React.FC<CurrentChordCardProps> = ({
             alt="Guitar Chord Fingering"
             className="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-transform duration-300"
           />
+
+          <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-xs text-[8px] font-mono uppercase text-white/90 font-bold">
+            Hand Form
+          </div>
 
           {/* Floating Play Icon */}
           <div className="absolute bottom-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 backdrop-blur-xs flex items-center justify-center text-white border border-white/20 group-hover:bg-analog-accent transition">

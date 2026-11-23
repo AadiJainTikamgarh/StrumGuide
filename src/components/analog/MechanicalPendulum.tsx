@@ -40,9 +40,9 @@ export const MechanicalPendulum: React.FC<MechanicalPendulumProps> = ({
   const pendulumAngle = !isPlaying ? 0 : currentDirection === 'down' ? -30 : 30;
 
   return (
-    <div className="relative rounded-2xl border border-analog-border bg-analog-surface p-5 shadow-xs flex flex-col justify-between select-none overflow-hidden h-full">
+    <div className="relative rounded-2xl border border-analog-border bg-analog-surface p-4 sm:p-5 shadow-xs flex flex-col select-none overflow-hidden h-full">
       {/* Card Header */}
-      <div className="flex items-center space-x-2 text-analog-primary mb-1">
+      <div className="flex items-center space-x-2 text-analog-primary mb-2">
         <Hand className="w-4 h-4 text-analog-secondary" />
         <h3 className="font-display text-sm font-bold tracking-tight">Strum Motion</h3>
       </div>
@@ -73,11 +73,11 @@ export const MechanicalPendulum: React.FC<MechanicalPendulumProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Gauge Metronome Arc Chamber */}
-      <div className="relative w-full h-32 flex items-center justify-center">
+      {/* Gauge Metronome Arc Chamber - Optical Center Fill */}
+      <div className="relative w-full flex-1 flex flex-col items-center justify-center my-auto min-h-[140px] py-1">
         {/* Curved Speedometer-style Arc Guide (SVG) */}
         <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
+          className="w-full max-w-[240px] h-32 sm:h-36 pointer-events-none"
           viewBox="0 0 240 120"
           preserveAspectRatio="xMidYMid meet"
         >
@@ -113,7 +113,7 @@ export const MechanicalPendulum: React.FC<MechanicalPendulumProps> = ({
         </svg>
 
         {/* Directional Labels: DOWN on Left (Orange) and UP on Right (Green) */}
-        <div className="absolute inset-x-3 bottom-4 flex justify-between pointer-events-none">
+        <div className="absolute inset-x-2 sm:inset-x-4 bottom-2 flex justify-between pointer-events-none">
           <div
             className={`flex items-center space-x-1 font-display text-[11px] font-black tracking-wider transition-colors ${
               currentDirection === 'down' && isPlaying
@@ -138,7 +138,7 @@ export const MechanicalPendulum: React.FC<MechanicalPendulumProps> = ({
         </div>
 
         {/* Oscillating Pendulum Arm with Guitar Pick Tip */}
-        <div className="relative w-12 h-28 flex justify-center items-end" style={{ transformOrigin: 'bottom center' }}>
+        <div className="absolute bottom-1 w-12 h-28 flex justify-center items-end pointer-events-none" style={{ transformOrigin: 'bottom center' }}>
           <motion.div
             animate={{
               rotate: pendulumAngle,
@@ -178,7 +178,7 @@ export const MechanicalPendulum: React.FC<MechanicalPendulumProps> = ({
       </div>
 
       {/* Subtitle */}
-      <div className="text-center font-sans italic text-[11px] text-analog-secondary mt-1">
+      <div className="text-center font-sans italic text-[11px] text-analog-secondary mt-auto pt-1">
         Continuous Pendulum Motion
       </div>
     </div>

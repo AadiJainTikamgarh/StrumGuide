@@ -206,8 +206,8 @@ export const PatternSequencerCard: React.FC<PatternSequencerCardProps> = ({
 
         {/* Center: Interactive Beat Slots Grid (8 cols on desktop) */}
         <div className="lg:col-span-8 flex flex-col min-w-0">
-          <div className="overflow-x-auto overflow-y-hidden lg:overflow-visible py-2 sm:py-2.5 px-1 no-scrollbar">
-            <div className="min-w-[280px] sm:min-w-0">
+          <div className="w-full overflow-visible py-2 px-1">
+            <div className="w-full">
               {/* Beat Numbers Above Slots */}
               <div className="grid grid-cols-8 gap-1.5 sm:gap-2 mb-1 px-0.5 text-center font-display items-end">
                 {visibleSlots.map((s, idx) => {

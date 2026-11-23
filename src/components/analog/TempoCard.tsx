@@ -181,15 +181,15 @@ export const TempoCard: React.FC<TempoCardProps> = ({
   ];
 
   return (
-    <div className="rounded-2xl border border-analog-border bg-analog-surface p-4 sm:p-5 shadow-xs flex flex-col justify-between select-none h-full">
+    <div className="rounded-2xl border border-analog-border bg-analog-surface p-4 sm:p-5 shadow-xs flex flex-col select-none h-full">
       {/* Card Header */}
-      <div className="flex items-center space-x-2 text-analog-primary mb-3">
+      <div className="flex items-center space-x-2 text-analog-primary mb-2">
         <Sliders className="w-4 h-4 text-analog-secondary" />
         <h3 className="font-display text-sm font-bold tracking-tight">Tempo</h3>
       </div>
 
       {/* Main Instrument Cluster */}
-      <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 sm:gap-3">
+      <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 sm:gap-3 flex-1 my-auto py-1">
         {/* BPM Big Number Display */}
         <div className="flex flex-col min-w-[55px] sm:min-w-[70px]">
           <span className="font-display text-3xl sm:text-4xl font-black text-analog-primary leading-none tracking-tight">

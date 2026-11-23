@@ -24,7 +24,7 @@ export interface ChordDefinition {
   // Actual frequencies of the fretted notes:
   frequencies: [number, number, number, number, number, number];
   fingering?: string[]; // display guidance, e.g. ['3', '2', '0', '0', '0', '3']
-  category: 'Major' | 'Minor' | 'Dominant 7th' | 'Other';
+  category: 'Major' | 'Minor' | 'Dominant 7th' | '7th' | 'Suspended' | 'Other';
 }
 
 export interface StrumPattern {
