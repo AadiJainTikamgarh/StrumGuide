@@ -209,12 +209,22 @@ export const PatternSequencerCard: React.FC<PatternSequencerCardProps> = ({
           <div className="overflow-x-auto overflow-y-hidden lg:overflow-visible py-2 sm:py-2.5 px-1 no-scrollbar">
             <div className="min-w-[280px] sm:min-w-0">
               {/* Beat Numbers Above Slots */}
-              <div className="grid grid-cols-8 gap-1.5 sm:gap-2 mb-1.5 px-0.5 text-center font-display text-[10px] sm:text-xs font-bold text-analog-secondary">
-                {visibleSlots.map((s, idx) => (
-                  <span key={`lbl-${idx}`} className={s.subdivisionLabel.match(/[0-9]/) ? 'text-analog-primary font-black' : ''}>
-                    {s.subdivisionLabel}
-                  </span>
-                ))}
+              <div className="grid grid-cols-8 gap-1.5 sm:gap-2 mb-1 px-0.5 text-center font-display items-end">
+                {visibleSlots.map((s, idx) => {
+                  const isDownbeat = !!s.subdivisionLabel.match(/[0-9]/);
+                  return (
+                    <span
+                      key={`lbl-${idx}`}
+                      className={
+                        isDownbeat
+                          ? 'text-analog-primary font-black text-xs sm:text-sm leading-none'
+                          : 'text-analog-secondary/75 font-mono font-bold text-[10px] sm:text-xs leading-none'
+                      }
+                    >
+                      {s.subdivisionLabel}
+                    </span>
+                  );
+                })}
               </div>
 
               {/* Rhythm Keycap Slots */}

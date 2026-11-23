@@ -207,19 +207,21 @@ export const PracticeStudio: React.FC<PracticeStudioProps> = ({
       />
 
       {/* ─────────────────────────────────────────────────────────────
-          ROW 4: FLOATING BOTTOM TRANSPORT BAR
+          ROW 4: FLOATING BOTTOM TRANSPORT BAR (Sticky on Viewport)
       ────────────────────────────────────────────────────────────── */}
-      <FloatingTransportBar
-        currentPattern={pattern}
-        isPlaying={isPlaying}
-        loopEnabled={loopEnabled}
-        speedTrainer={speedTrainer}
-        onSelectPattern={onSelectPattern}
-        onTogglePlay={onTogglePlay}
-        onRestart={onRestart}
-        onToggleLoop={onToggleLoop}
-        onToggleSpeedTrainer={onToggleSpeedTrainer}
-      />
+      <div className="sticky bottom-4 z-30 pt-1">
+        <FloatingTransportBar
+          currentPattern={pattern}
+          isPlaying={isPlaying}
+          loopEnabled={loopEnabled}
+          speedTrainer={speedTrainer}
+          onSelectPattern={onSelectPattern}
+          onTogglePlay={onTogglePlay}
+          onRestart={onRestart}
+          onToggleLoop={onToggleLoop}
+          onToggleSpeedTrainer={onToggleSpeedTrainer}
+        />
+      </div>
     </div>
   );
 };

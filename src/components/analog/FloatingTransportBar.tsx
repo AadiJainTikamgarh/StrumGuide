@@ -73,10 +73,17 @@ export const FloatingTransportBar: React.FC<FloatingTransportBarProps> = ({
 
         {/* Speed Trainer for Mobile (shown on mobile, hidden on sm+) */}
         <div className="flex sm:hidden items-center shrink-0">
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={onToggleSpeedTrainer}
-            className={`px-2.5 py-1.5 rounded-xl border flex items-center space-x-2 font-display text-xs font-bold transition-all cursor-pointer select-none ${
+            onKeyDown={(e) => {
+              if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                onToggleSpeedTrainer();
+              }
+            }}
+            className={`px-2.5 py-1.5 rounded-xl border flex items-center space-x-2 font-display text-xs font-bold transition-all cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-analog-accent ${
               speedTrainer.enabled
                 ? 'bg-analog-accent/10 border-analog-accent/60 text-analog-accent shadow-2xs'
                 : 'bg-analog-bg border-analog-border text-analog-secondary hover:text-analog-primary'
@@ -90,7 +97,7 @@ export const FloatingTransportBar: React.FC<FloatingTransportBarProps> = ({
               onChange={onToggleSpeedTrainer}
               label="Toggle Speed Trainer"
             />
-          </button>
+          </div>
         </div>
       </div>
 
@@ -157,10 +164,17 @@ export const FloatingTransportBar: React.FC<FloatingTransportBarProps> = ({
 
       {/* Right: Speed Trainer Pill (shown on sm+ desktop/tablet) */}
       <div className="hidden sm:flex items-center space-x-2">
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={onToggleSpeedTrainer}
-          className={`px-3 py-1.5 rounded-xl border flex items-center space-x-2.5 font-display text-xs font-bold transition-all cursor-pointer select-none ${
+          onKeyDown={(e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+              e.preventDefault();
+              onToggleSpeedTrainer();
+            }
+          }}
+          className={`px-3 py-1.5 rounded-xl border flex items-center space-x-2.5 font-display text-xs font-bold transition-all cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-analog-accent ${
             speedTrainer.enabled
               ? 'bg-analog-accent/10 border-analog-accent/60 text-analog-accent shadow-2xs'
               : 'bg-analog-bg border-analog-border text-analog-secondary hover:text-analog-primary hover:border-analog-secondary/60'
@@ -177,7 +191,7 @@ export const FloatingTransportBar: React.FC<FloatingTransportBarProps> = ({
             onChange={onToggleSpeedTrainer}
             label="Toggle Speed Trainer"
           />
-        </button>
+        </div>
       </div>
     </div>
   );
