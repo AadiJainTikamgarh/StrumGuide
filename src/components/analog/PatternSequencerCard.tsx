@@ -206,7 +206,7 @@ export const PatternSequencerCard: React.FC<PatternSequencerCardProps> = ({
 
         {/* Center: Interactive Beat Slots Grid (8 cols on desktop) */}
         <div className="lg:col-span-8 flex flex-col min-w-0">
-          <div className="overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+          <div className="overflow-x-auto overflow-y-hidden lg:overflow-visible py-2 sm:py-2.5 px-1 no-scrollbar">
             <div className="min-w-[280px] sm:min-w-0">
               {/* Beat Numbers Above Slots */}
               <div className="grid grid-cols-8 gap-1.5 sm:gap-2 mb-1.5 px-0.5 text-center font-display text-[10px] sm:text-xs font-bold text-analog-secondary">
@@ -254,7 +254,7 @@ export const PatternSequencerCard: React.FC<PatternSequencerCardProps> = ({
                         whileTap={{ scale: 0.93 }}
                         onClick={() => onSlotCycleAction(idx)}
                         className={`w-full h-11 sm:h-14 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${bgStyle} ${
-                          isCurrent ? 'ring-2 ring-analog-accent ring-offset-2 ring-offset-analog-surface scale-105 z-10' : ''
+                          isCurrent ? 'ring-2 ring-analog-accent ring-offset-2 ring-offset-analog-surface scale-[1.02] z-10' : ''
                         }`}
                         title={`Click to cycle action (${slot.action})`}
                       >
