@@ -204,6 +204,7 @@ export const PracticeStudio: React.FC<PracticeStudioProps> = ({
         onRemoveBar={onRemoveChordBar}
         onAudioSettingsChange={onAudioSettingsChange}
         onCountInBeatsChange={onCountInBeatsChange}
+        onPreviewSound={onChordSoundPreview}
       />
 
       {/* ─────────────────────────────────────────────────────────────

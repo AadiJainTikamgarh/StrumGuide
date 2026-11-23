@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Music2, Sliders, BarChart2, Plus, Guitar, BellRing, ChevronDown, Trash2 } from 'lucide-react';
+import { Music2, Sliders, BarChart2, Plus, Guitar, BellRing, ChevronDown } from 'lucide-react';
 import { AudioSettings, ChordMode } from '@/types/strum';
 import { ALL_CHORDS, CHORD_LIBRARY } from '@/constants/chords';
 import { ToggleSwitch } from './ToggleSwitch';
+import { ChordPickerModal } from './ChordPickerModal';
 
 const CHORD_GROUPS: Record<string, string[]> = {
   Essential: ['G', 'C', 'D', 'Em', 'Am', 'E', 'A', 'F', 'Dm', 'Bm'],
@@ -30,6 +31,7 @@ interface BottomControlsRowProps {
   onRemoveBar?: (barIndex: number) => void;
   onAudioSettingsChange: (settings: AudioSettings) => void;
   onCountInBeatsChange: (beats: 3 | 4) => void;
+  onPreviewSound?: (chordName: string) => void;
 }
 
 export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
@@ -47,9 +49,9 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
   onRemoveBar,
   onAudioSettingsChange,
   onCountInBeatsChange,
+  onPreviewSound,
 }) => {
   const [editingBarIndex, setEditingBarIndex] = useState<number | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>('Essential');
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch select-none min-w-0">
@@ -103,44 +105,72 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
 
         {/* Content based on selected mode */}
         {chordMode === 'single' ? (
-          /* Single Chord Quick Selector with Category Filter */
-          <div className="space-y-2 py-0.5">
-            {/* Category Filter Pills */}
-            <div className="flex items-center space-x-1 overflow-x-auto no-scrollbar pb-0.5">
-              {Object.keys(CHORD_GROUPS).map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-2 py-0.5 rounded-md font-mono text-[10px] font-bold transition shrink-0 cursor-pointer ${
-                    selectedCategory === cat
-                      ? 'bg-analog-primary text-white shadow-2xs'
-                      : 'bg-analog-bg/70 text-analog-secondary hover:text-analog-primary border border-analog-border/50'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
+          /* Single Chord Quick Selector with Dropdown */
+          <div className="space-y-2.5 py-0.5">
+            <div className="flex items-center space-x-3">
+              {/* Selected Chord Badge with large bold lettering */}
+              <div className="w-14 h-12 rounded-xl bg-analog-accent text-white flex flex-col items-center justify-center shrink-0 shadow-xs ring-2 ring-analog-accent/30">
+                <span className="font-display text-xl font-black leading-none">{singleChord}</span>
+                <span className="font-mono text-[8px] opacity-80 mt-0.5 uppercase tracking-wider">
+                  {CHORD_LIBRARY[singleChord]?.category || 'Major'}
+                </span>
+              </div>
 
-            {/* Chords Grid */}
-            <div className="grid grid-cols-5 sm:grid-cols-10 gap-1.5 max-h-[72px] overflow-y-auto no-scrollbar py-0.5">
-              {CHORD_GROUPS[selectedCategory].map((ch) => {
-                const isSelected = singleChord === ch;
-                return (
-                  <button
-                    key={ch}
-                    onClick={() => onSelectSingleChord(ch)}
-                    className={`py-1.5 px-1 rounded-xl font-display text-xs font-bold transition flex flex-col items-center justify-center cursor-pointer ${
-                      isSelected
-                        ? 'bg-analog-accent text-white shadow-sm ring-2 ring-analog-accent/40 scale-105 font-black'
-                        : 'bg-analog-elevated/70 border border-analog-border text-analog-primary hover:border-analog-secondary'
-                    }`}
+              {/* Native Dropdown Selector */}
+              <div className="relative flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-mono text-[9px] text-analog-secondary uppercase tracking-wider font-bold">
+                    Chord Voicing
+                  </span>
+                  <span className="font-mono text-[9px] text-analog-secondary truncate max-w-[140px]">
+                    {CHORD_LIBRARY[singleChord]?.displayName || singleChord}
+                  </span>
+                </div>
+                <div className="relative">
+                  <select
+                    value={singleChord}
+                    onChange={(e) => onSelectSingleChord(e.target.value)}
+                    className="appearance-none w-full px-3 py-1.5 pr-8 rounded-xl bg-analog-bg border border-analog-border font-display text-xs font-bold text-analog-primary cursor-pointer hover:border-analog-secondary/70 focus:outline-none focus:ring-2 focus:ring-analog-accent truncate"
                   >
-                    <span className="leading-none">{ch}</span>
-                  </button>
-                );
-              })}
+                    <optgroup label="Essential Open Chords">
+                      {CHORD_GROUPS.Essential.map((ch) => (
+                        <option key={ch} value={ch}>
+                          {ch} — {CHORD_LIBRARY[ch]?.displayName}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Major Chords">
+                      {CHORD_GROUPS.Major.map((ch) => (
+                        <option key={ch} value={ch}>
+                          {ch} — {CHORD_LIBRARY[ch]?.displayName}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Minor Chords">
+                      {CHORD_GROUPS.Minor.map((ch) => (
+                        <option key={ch} value={ch}>
+                          {ch} — {CHORD_LIBRARY[ch]?.displayName}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="7th Chords">
+                      {CHORD_GROUPS['7th'].map((ch) => (
+                        <option key={ch} value={ch}>
+                          {ch} — {CHORD_LIBRARY[ch]?.displayName}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Suspended & Add Chords">
+                      {CHORD_GROUPS['Sus/Add'].map((ch) => (
+                        <option key={ch} value={ch}>
+                          {ch} — {CHORD_LIBRARY[ch]?.displayName}
+                        </option>
+                      ))}
+                    </optgroup>
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-analog-secondary absolute right-2.5 top-2 pointer-events-none" />
+                </div>
+              </div>
             </div>
 
             <div className="flex items-center justify-between text-[11px] font-sans text-analog-secondary px-0.5">
@@ -156,67 +186,23 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
             <div className="flex items-center flex-wrap gap-2">
               {progression.map((chord, idx) => {
                 const isActive = isPlaying && activeBarIndex % progression.length === idx;
-                const isEditing = editingBarIndex === idx;
 
                 return (
                   <React.Fragment key={`prog-${idx}`}>
-                    <div className="relative">
-                      <button
-                        onClick={() => setEditingBarIndex(isEditing ? null : idx)}
-                        className={`px-3.5 py-2 rounded-xl flex flex-col items-center justify-center transition cursor-pointer ${
-                          isActive
-                            ? 'bg-analog-accent text-white shadow-sm ring-2 ring-analog-accent/40 scale-105 font-black'
-                            : isEditing
-                            ? 'bg-analog-surface border-2 border-analog-accent text-analog-primary'
-                            : 'bg-analog-elevated/70 border border-analog-border text-analog-primary hover:border-analog-secondary'
-                        }`}
-                        title="Click to change chord"
-                      >
-                        <span className="font-display text-sm font-black leading-none">{chord}</span>
-                        <span className={`font-mono text-[9px] mt-0.5 ${isActive ? 'text-white/80' : 'text-analog-secondary'}`}>
-                          Bar {idx + 1}
-                        </span>
-                      </button>
-
-                      {/* Dropdown to change chord for this bar */}
-                      {isEditing && (
-                        <div className="absolute top-full left-0 mt-1.5 z-40 p-2 bg-analog-surface border border-analog-border rounded-xl shadow-xl w-60 max-h-56 overflow-y-auto no-scrollbar">
-                          <div className="text-[10px] font-mono text-analog-secondary uppercase tracking-wider mb-1 px-0.5 font-bold">
-                            Select Chord for Bar {idx + 1}
-                          </div>
-                          <div className="grid grid-cols-4 gap-1">
-                            {ALL_CHORDS.map((ch) => (
-                              <button
-                                key={ch}
-                                onClick={() => {
-                                  onChordChange(idx, ch);
-                                  setEditingBarIndex(null);
-                                }}
-                                className={`py-1.5 px-1 rounded-lg text-xs font-display font-bold text-center transition cursor-pointer ${
-                                  chord === ch
-                                    ? 'bg-analog-accent text-white shadow-xs'
-                                    : 'hover:bg-analog-elevated bg-analog-bg/60 border border-analog-border/50 text-analog-primary'
-                                }`}
-                              >
-                                {ch}
-                              </button>
-                            ))}
-                          </div>
-                          {progression.length > 1 && onRemoveBar && (
-                            <button
-                              onClick={() => {
-                                onRemoveBar(idx);
-                                setEditingBarIndex(null);
-                              }}
-                              className="w-full mt-2 pt-1.5 border-t border-analog-border text-[10px] text-analog-accent hover:underline flex items-center justify-center gap-1 cursor-pointer font-bold"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                              <span>Remove Bar</span>
-                            </button>
-                          )}
-                        </div>
-                      )}
-                    </div>
+                    <button
+                      onClick={() => setEditingBarIndex(idx)}
+                      className={`px-3.5 py-2 rounded-xl flex flex-col items-center justify-center transition cursor-pointer ${
+                        isActive
+                          ? 'bg-analog-accent text-white shadow-sm ring-2 ring-analog-accent/40 scale-105 font-black'
+                          : 'bg-analog-elevated/70 border border-analog-border text-analog-primary hover:border-analog-accent hover:bg-analog-surface'
+                      }`}
+                      title="Click to change chord in modal"
+                    >
+                      <span className="font-display text-sm font-black leading-none">{chord}</span>
+                      <span className={`font-mono text-[9px] mt-0.5 ${isActive ? 'text-white/80' : 'text-analog-secondary'}`}>
+                        Bar {idx + 1}
+                      </span>
+                    </button>
 
                     {idx < progression.length - 1 && (
                       <span className="text-analog-secondary font-mono text-xs font-bold">›</span>
@@ -241,7 +227,7 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
             </div>
 
             <p className="font-sans text-[11px] text-analog-secondary px-0.5">
-              Click any bar to change its chord. Progresses sequentially across bars.
+              Click any bar to change its chord in the chord library modal.
             </p>
           </div>
         )}
@@ -397,6 +383,24 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
           </p>
         </div>
       </div>
+
+      {/* Chord Picker Modal for Progression Bars */}
+      {editingBarIndex !== null && (
+        <ChordPickerModal
+          isOpen={editingBarIndex !== null}
+          barIndex={editingBarIndex}
+          currentChord={progression[editingBarIndex] || 'G'}
+          totalBars={progression.length}
+          onSelectChord={(newChord) => onChordChange(editingBarIndex, newChord)}
+          onRemoveBar={
+            progression.length > 1 && onRemoveBar
+              ? () => onRemoveBar(editingBarIndex)
+              : undefined
+          }
+          onClose={() => setEditingBarIndex(null)}
+          onPreviewSound={onPreviewSound}
+        />
+      )}
     </div>
   );
 };
