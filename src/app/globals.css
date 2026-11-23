@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --analog-bg: #F4F0E7;
+  --analog-surface: #FBF9F4;
+  --analog-elevated: #EDE7DC;
+  --analog-border: #DCD6C9;
+  --analog-text-primary: #25251F;
+  --analog-text-secondary: #8C887D;
+  --analog-accent: #E45B38;
+  --analog-olive: #78866A;
+  --background: var(--analog-bg);
+  --foreground: var(--analog-text-primary);
+}
+
+.dark {
+  --analog-bg: #20211E;
+  --analog-surface: #292B26;
+  --analog-elevated: #32352F;
+  --analog-border: #41433C;
+  --analog-text-primary: #F4F0E7;
+  --analog-text-secondary: #AAA69A;
+  --analog-accent: #E97852;
+  --analog-olive: #91A182;
+  --background: var(--analog-bg);
+  --foreground: var(--analog-text-primary);
+}
+
+body {
+  color: var(--analog-text-primary);
+  background-color: var(--analog-bg);
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Subtle machine screw / rivet decorative marker */
+.machine-screw {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--analog-border);
+  position: relative;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+.machine-screw::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 1px;
+  width: 5px;
+  height: 1px;
+  background: var(--analog-text-secondary);
+  opacity: 0.6;
+}
+
+/* Analog tactile button and keycap borders */
+.analog-panel {
+  background-color: var(--analog-surface);
+  border: 1px solid var(--analog-border);
+}
+
+.analog-bezel {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+/* Custom understated scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--analog-border);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--analog-text-secondary);
+}
