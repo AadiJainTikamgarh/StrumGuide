@@ -120,43 +120,49 @@ export const PracticeStudio: React.FC<PracticeStudioProps> = ({
   onAddChordBar,
 }) => {
   return (
-    <div className="space-y-5">
+    <div className="space-y-4 sm:space-y-5 min-w-0">
       {/* ─────────────────────────────────────────────────────────────
           ROW 1: TEMPO CARD + STRUM MOTION GAUGE + CURRENT CHORD CARD
       ────────────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 items-stretch">
         {/* Card 1: Tempo Instrument */}
-        <TempoCard
-          bpm={bpm}
-          timeSignature={timeSignature}
-          subdivision={subdivision}
-          onBpmChange={onBpmChange}
-          onTapTempo={onTapTempo}
-          onTimeSignatureChange={onTimeSignatureChange}
-          onSubdivisionChange={onSubdivisionChange}
-        />
+        <div className="col-span-1">
+          <TempoCard
+            bpm={bpm}
+            timeSignature={timeSignature}
+            subdivision={subdivision}
+            onBpmChange={onBpmChange}
+            onTapTempo={onTapTempo}
+            onTimeSignatureChange={onTimeSignatureChange}
+            onSubdivisionChange={onSubdivisionChange}
+          />
+        </div>
 
         {/* Card 2: Strum Motion Gauge */}
-        <MechanicalPendulum
-          isPlaying={isPlaying}
-          isCountIn={isCountIn}
-          countInBeat={countInBeat}
-          currentDirection={currentDirection}
-          currentAction={currentAction}
-          currentBeat={currentBeat}
-          currentSubdivision={currentSubdivision}
-          currentChord={activeChord}
-          bpm={bpm}
-        />
+        <div className="col-span-1">
+          <MechanicalPendulum
+            isPlaying={isPlaying}
+            isCountIn={isCountIn}
+            countInBeat={countInBeat}
+            currentDirection={currentDirection}
+            currentAction={currentAction}
+            currentBeat={currentBeat}
+            currentSubdivision={currentSubdivision}
+            currentChord={activeChord}
+            bpm={bpm}
+          />
+        </div>
 
         {/* Card 3: Current Chord & Hand Fingering Thumbnail */}
-        <CurrentChordCard
-          chordName={activeChord}
-          chordMode={chordMode}
-          onPrevChord={onPrevChord}
-          onNextChord={onNextChord}
-          onPlaySound={onChordSoundPreview}
-        />
+        <div className="col-span-1 md:col-span-2 xl:col-span-1">
+          <CurrentChordCard
+            chordName={activeChord}
+            chordMode={chordMode}
+            onPrevChord={onPrevChord}
+            onNextChord={onNextChord}
+            onPlaySound={onChordSoundPreview}
+          />
+        </div>
       </div>
 
       {/* ─────────────────────────────────────────────────────────────

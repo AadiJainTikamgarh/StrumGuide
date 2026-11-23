@@ -511,11 +511,30 @@ export default function Home() {
       />
 
       {/* Main Hardware Workspace Area */}
-      <div className="flex-1 lg:pl-64 pb-20 lg:pb-12 flex flex-col">
+      <div className="flex-1 lg:pl-64 pb-28 sm:pb-24 lg:pb-12 flex flex-col min-w-0">
         {/* Top Header matching reference image: Title + Subtitle + Capsule Theme Toggle */}
-        <header className="px-6 md:px-8 pt-7 pb-4 flex items-center justify-between">
-          <div>
-            <h2 className="font-display text-2xl md:text-3xl font-black text-analog-primary tracking-tight">
+        <header className="px-3.5 sm:px-6 md:px-8 pt-4 sm:pt-6 md:pt-7 pb-3 sm:pb-4 flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            {/* Mobile Brand Logo & Name (matching reference smartphone mockup) */}
+            <div className="flex items-center space-x-2 lg:hidden mb-1">
+              <div
+                className="w-6 h-6 rounded-md bg-analog-accent flex items-center justify-center text-white shadow-xs shrink-0"
+                style={{
+                  clipPath: 'polygon(50% 0%, 100% 35%, 82% 100%, 18% 100%, 0% 35%)',
+                }}
+              >
+                <div className="flex items-center space-x-0.5">
+                  <span className="w-0.5 h-1.5 bg-white rounded-full" />
+                  <span className="w-0.5 h-2.5 bg-white rounded-full" />
+                  <span className="w-0.5 h-1.5 bg-white rounded-full" />
+                </div>
+              </div>
+              <span className="font-display text-sm font-black tracking-tight text-analog-primary">
+                StrumGuide
+              </span>
+            </div>
+
+            <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-black text-analog-primary tracking-tight truncate">
               {activeTab === 'practice' && 'Practice'}
               {activeTab === 'patterns' && 'Patterns Library'}
               {activeTab === 'chords' && 'Guitar Chords'}
@@ -523,20 +542,22 @@ export default function Home() {
               {activeTab === 'library' && 'Custom Patterns'}
               {activeTab === 'settings' && 'Settings'}
             </h2>
-            <p className="font-sans italic text-xs md:text-sm text-analog-secondary mt-0.5">
+            <p className="font-sans italic text-[11px] sm:text-xs md:text-sm text-analog-secondary mt-0.5 truncate">
               Build steady rhythm. Master strumming patterns.
             </p>
           </div>
 
           {/* Capsule Sun / Moon theme toggle button matching reference UI */}
-          <ThemeToggleCapsule
-            isDarkMode={isDarkMode}
-            onToggleTheme={handleToggleTheme}
-          />
+          <div className="shrink-0">
+            <ThemeToggleCapsule
+              isDarkMode={isDarkMode}
+              onToggleTheme={handleToggleTheme}
+            />
+          </div>
         </header>
 
         {/* View Content Port */}
-        <main className="flex-1 max-w-6xl w-full px-6 md:px-8">
+        <main className="flex-1 max-w-6xl w-full px-3.5 sm:px-6 md:px-8 min-w-0">
           {activeTab === 'practice' && (
             <PracticeStudio
               pattern={pattern}

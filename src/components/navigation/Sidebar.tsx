@@ -121,23 +121,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </aside>
 
       {/* ─────────────────────────────────────────────────────────────
-          MOBILE BOTTOM NAVIGATION BAR
+          MOBILE BOTTOM NAVIGATION BAR (with iOS safe-area padding)
       ────────────────────────────────────────────────────────────── */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 border-t border-analog-border bg-analog-surface/95 backdrop-blur-md px-3 py-2 flex items-center justify-around z-50 shadow-lg">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 border-t border-analog-border bg-analog-surface/95 backdrop-blur-md px-1.5 sm:px-3 pt-1.5 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] flex items-center justify-around z-50 shadow-lg select-none">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
           return (
             <button
               key={item.id}
               onClick={() => onTabChange(item.id)}
-              className={`flex flex-col items-center py-1 px-2 rounded-lg transition ${
+              className={`flex flex-col items-center py-1 px-1 sm:px-2 rounded-lg transition-all cursor-pointer ${
                 isActive
-                  ? 'text-analog-accent font-bold'
-                  : 'text-analog-secondary hover:text-analog-primary'
+                  ? 'text-analog-accent font-bold scale-105'
+                  : 'text-analog-secondary hover:text-analog-primary active:scale-95'
               }`}
             >
-              {item.icon}
-              <span className="font-mono text-[9px] mt-0.5">{item.label}</span>
+              <span className="shrink-0">{item.icon}</span>
+              <span className="font-mono text-[8.5px] sm:text-[9.5px] mt-0.5 truncate max-w-[48px] sm:max-w-none">
+                {item.label}
+              </span>
             </button>
           );
         })}

@@ -181,7 +181,7 @@ export const TempoCard: React.FC<TempoCardProps> = ({
   ];
 
   return (
-    <div className="rounded-2xl border border-analog-border bg-analog-surface p-5 shadow-xs flex flex-col justify-between select-none">
+    <div className="rounded-2xl border border-analog-border bg-analog-surface p-4 sm:p-5 shadow-xs flex flex-col justify-between select-none h-full">
       {/* Card Header */}
       <div className="flex items-center space-x-2 text-analog-primary mb-3">
         <Sliders className="w-4 h-4 text-analog-secondary" />
@@ -189,13 +189,13 @@ export const TempoCard: React.FC<TempoCardProps> = ({
       </div>
 
       {/* Main Instrument Cluster */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 sm:gap-3">
         {/* BPM Big Number Display */}
-        <div className="flex flex-col min-w-[70px]">
-          <span className="font-display text-4xl font-black text-analog-primary leading-none tracking-tight">
+        <div className="flex flex-col min-w-[55px] sm:min-w-[70px]">
+          <span className="font-display text-3xl sm:text-4xl font-black text-analog-primary leading-none tracking-tight">
             {bpm}
           </span>
-          <span className="font-mono text-xs font-semibold text-analog-secondary mt-1">
+          <span className="font-mono text-[10px] sm:text-xs font-semibold text-analog-secondary mt-0.5 sm:mt-1">
             BPM
           </span>
         </div>
@@ -319,8 +319,8 @@ export const TempoCard: React.FC<TempoCardProps> = ({
         </div>
 
         {/* Time Signature & Subdivision dropdowns */}
-        <div className="flex flex-col space-y-2 pl-1 border-l border-analog-border/50">
-          <div>
+        <div className="flex flex-row sm:flex-col gap-2 sm:space-y-2 pl-0 sm:pl-1 pt-2 sm:pt-0 border-t sm:border-t-0 sm:border-l border-analog-border/50 w-full sm:w-auto justify-between sm:justify-start">
+          <div className="flex-1 sm:flex-none">
             <span className="font-mono text-[9px] text-analog-secondary uppercase block mb-0.5">
               Time
             </span>
@@ -337,7 +337,7 @@ export const TempoCard: React.FC<TempoCardProps> = ({
             </div>
           </div>
 
-          <div>
+          <div className="flex-1 sm:flex-none">
             <span className="font-mono text-[9px] text-analog-secondary uppercase block mb-0.5">
               Subdivision
             </span>

@@ -43,15 +43,15 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
   const [editingBarIndex, setEditingBarIndex] = useState<number | null>(null);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch select-none">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch select-none min-w-0">
       {/* ─────────────────────────────────────────────────────────────
           1. CHORD CONTROL CARD (Single Chord vs Progression) (5 cols)
       ────────────────────────────────────────────────────────────── */}
-      <div className="lg:col-span-5 rounded-2xl border border-analog-border bg-analog-surface p-5 shadow-xs flex flex-col justify-between space-y-3">
+      <div className="md:col-span-2 lg:col-span-5 rounded-2xl border border-analog-border bg-analog-surface p-4 sm:p-5 shadow-xs flex flex-col justify-between space-y-3">
         {/* Header with Title and Mode Switcher */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
           <div className="flex items-center space-x-2 text-analog-primary">
-            <Music2 className="w-4 h-4 text-analog-secondary" />
+            <Music2 className="w-4 h-4 text-analog-secondary shrink-0" />
             <h3 className="font-display text-sm font-bold tracking-tight">
               {chordMode === 'single' ? 'Single Chord' : 'Chord Progression'}
             </h3>
@@ -61,7 +61,7 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
           <div
             role="radiogroup"
             aria-label="Chord playback mode"
-            className="flex items-center p-1 rounded-xl bg-analog-bg/90 border border-analog-border shadow-inner"
+            className="flex items-center p-1 rounded-xl bg-analog-bg/90 border border-analog-border shadow-inner shrink-0"
           >
             <button
               type="button"
@@ -215,9 +215,9 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
       </div>
 
       {/* ─────────────────────────────────────────────────────────────
-          2. AUDIO MIX CARD (4 cols)
+          2. AUDIO MIX CARD (4 cols on desktop, 1 col on tablet)
       ────────────────────────────────────────────────────────────── */}
-      <div className="lg:col-span-4 rounded-2xl border border-analog-border bg-analog-surface p-5 shadow-xs flex flex-col justify-between space-y-3">
+      <div className="md:col-span-1 lg:col-span-4 rounded-2xl border border-analog-border bg-analog-surface p-4 sm:p-5 shadow-xs flex flex-col justify-between space-y-3">
         <div className="flex items-center space-x-2 text-analog-primary">
           <Sliders className="w-4 h-4 text-analog-secondary" />
           <h3 className="font-display text-sm font-bold tracking-tight">Audio Mix</h3>
@@ -225,9 +225,9 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
 
         <div className="space-y-3">
           {/* Guitar slider + toggle */}
-          <div className="flex items-center space-x-3 text-xs">
+          <div className="flex items-center space-x-2 sm:space-x-3 text-xs">
             <Guitar className="w-4 h-4 text-analog-secondary shrink-0" />
-            <span className="w-16 font-sans text-xs font-medium text-analog-primary">Guitar</span>
+            <span className="w-14 sm:w-16 font-sans text-xs font-medium text-analog-primary shrink-0">Guitar</span>
 
             {/* Orange Toggle Switch */}
             <ToggleSwitch
@@ -256,19 +256,19 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
                   guitarVolume: parseFloat(e.target.value),
                 })
               }
-              className={`flex-1 h-1.5 rounded-lg appearance-none cursor-pointer bg-analog-border accent-analog-accent ${
+              className={`flex-1 min-w-[50px] sm:min-w-[60px] h-1.5 rounded-lg appearance-none cursor-pointer bg-analog-border accent-analog-accent ${
                 audioSettings.isGuitarMuted ? 'opacity-40' : ''
               }`}
             />
-            <span className="font-mono text-[10px] text-analog-secondary w-7 text-right">
+            <span className="font-mono text-[10px] text-analog-secondary w-7 text-right shrink-0">
               {audioSettings.isGuitarMuted ? '0%' : `${Math.round(audioSettings.guitarVolume * 100)}%`}
             </span>
           </div>
 
           {/* Metronome slider + toggle */}
-          <div className="flex items-center space-x-3 text-xs">
+          <div className="flex items-center space-x-2 sm:space-x-3 text-xs">
             <BellRing className="w-4 h-4 text-analog-secondary shrink-0" />
-            <span className="w-16 font-sans text-xs font-medium text-analog-primary">Metronome</span>
+            <span className="w-14 sm:w-16 font-sans text-xs font-medium text-analog-primary shrink-0">Metronome</span>
 
             {/* Orange Toggle Switch */}
             <ToggleSwitch
@@ -297,11 +297,11 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
                   metronomeVolume: parseFloat(e.target.value),
                 })
               }
-              className={`flex-1 h-1.5 rounded-lg appearance-none cursor-pointer bg-analog-border accent-analog-accent ${
+              className={`flex-1 min-w-[50px] sm:min-w-[60px] h-1.5 rounded-lg appearance-none cursor-pointer bg-analog-border accent-analog-accent ${
                 audioSettings.isMetronomeMuted ? 'opacity-40' : ''
               }`}
             />
-            <span className="font-mono text-[10px] text-analog-secondary w-7 text-right">
+            <span className="font-mono text-[10px] text-analog-secondary w-7 text-right shrink-0">
               {audioSettings.isMetronomeMuted ? '0%' : `${Math.round(audioSettings.metronomeVolume * 100)}%`}
             </span>
           </div>
@@ -309,9 +309,9 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
       </div>
 
       {/* ─────────────────────────────────────────────────────────────
-          3. COUNT-IN CARD (3 cols)
+          3. COUNT-IN CARD (3 cols on desktop, 1 col on tablet)
       ────────────────────────────────────────────────────────────── */}
-      <div className="lg:col-span-3 rounded-2xl border border-analog-border bg-analog-surface p-5 shadow-xs flex flex-col justify-between space-y-3">
+      <div className="md:col-span-1 lg:col-span-3 rounded-2xl border border-analog-border bg-analog-surface p-4 sm:p-5 shadow-xs flex flex-col justify-between space-y-3">
         <div className="flex items-center space-x-2 text-analog-primary">
           <BarChart2 className="w-4 h-4 text-analog-secondary" />
           <h3 className="font-display text-sm font-bold tracking-tight">Count-In</h3>
@@ -319,11 +319,11 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
 
         <div className="flex items-center justify-between gap-2">
           {/* Beats Dropdown */}
-          <div className="relative flex-1">
+          <div className="relative flex-1 min-w-0">
             <select
               value={countInBeats}
               onChange={(e) => onCountInBeatsChange(Number(e.target.value) as 3 | 4)}
-              className="appearance-none w-full px-3 py-1.5 pr-6 rounded-xl bg-analog-bg border border-analog-border font-display text-xs font-bold text-analog-primary cursor-pointer"
+              className="appearance-none w-full px-3 py-1.5 pr-6 rounded-xl bg-analog-bg border border-analog-border font-display text-xs font-bold text-analog-primary cursor-pointer truncate"
             >
               <option value={4}>4 Beats</option>
               <option value={3}>3 Beats</option>

@@ -40,37 +40,62 @@ export const FloatingTransportBar: React.FC<FloatingTransportBarProps> = ({
   onToggleSpeedTrainer,
 }) => {
   return (
-    <div className="rounded-2xl border border-analog-border bg-analog-surface p-3 shadow-md flex flex-wrap items-center justify-between gap-3 select-none">
-      {/* Left: Pattern Selector & Favorite */}
-      <div className="flex items-center space-x-2">
-        <div className="relative">
-          <select
-            value={currentPattern.id}
-            onChange={(e) => {
-              const found = PRESET_PATTERNS.find((p) => p.id === e.target.value);
-              if (found) onSelectPattern(found);
-            }}
-            className="appearance-none px-3.5 py-1.5 pr-8 rounded-xl bg-analog-bg border border-analog-border font-display text-xs font-bold text-analog-primary cursor-pointer hover:border-analog-secondary"
+    <div className="rounded-2xl border border-analog-border bg-analog-surface p-3 sm:p-3.5 shadow-md flex flex-col sm:flex-row items-center justify-between gap-3 select-none min-w-0">
+      {/* Top Mobile Row: Pattern Selector & Speed Trainer on mobile */}
+      <div className="flex sm:contents items-center justify-between w-full gap-2">
+        {/* Left: Pattern Selector & Favorite */}
+        <div className="flex items-center space-x-2 min-w-0">
+          <div className="relative min-w-0">
+            <select
+              value={currentPattern.id}
+              onChange={(e) => {
+                const found = PRESET_PATTERNS.find((p) => p.id === e.target.value);
+                if (found) onSelectPattern(found);
+              }}
+              className="appearance-none px-3 py-1.5 pr-7 sm:px-3.5 sm:pr-8 rounded-xl bg-analog-bg border border-analog-border font-display text-xs font-bold text-analog-primary cursor-pointer hover:border-analog-secondary truncate max-w-[170px] sm:max-w-none"
+            >
+              {PRESET_PATTERNS.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="w-3.5 h-3.5 text-analog-secondary absolute right-2 top-2.5 pointer-events-none" />
+          </div>
+
+          <button
+            className="p-1.5 rounded-lg text-analog-secondary hover:text-analog-accent transition cursor-pointer shrink-0"
+            title="Favorite pattern"
           >
-            {PRESET_PATTERNS.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="w-3.5 h-3.5 text-analog-secondary absolute right-2.5 top-2.5 pointer-events-none" />
+            <Star className="w-4 h-4 fill-analog-accent text-analog-accent" />
+          </button>
         </div>
 
-        <button
-          className="p-1.5 rounded-lg text-analog-secondary hover:text-analog-accent transition cursor-pointer"
-          title="Favorite pattern"
-        >
-          <Star className="w-4 h-4 fill-analog-accent text-analog-accent" />
-        </button>
+        {/* Speed Trainer for Mobile (shown on mobile, hidden on sm+) */}
+        <div className="flex sm:hidden items-center shrink-0">
+          <button
+            type="button"
+            onClick={onToggleSpeedTrainer}
+            className={`px-2.5 py-1.5 rounded-xl border flex items-center space-x-2 font-display text-xs font-bold transition-all cursor-pointer select-none ${
+              speedTrainer.enabled
+                ? 'bg-analog-accent/10 border-analog-accent/60 text-analog-accent shadow-2xs'
+                : 'bg-analog-bg border-analog-border text-analog-secondary hover:text-analog-primary'
+            }`}
+            title="Toggle Speed Trainer"
+          >
+            <Rocket className={`w-3.5 h-3.5 ${speedTrainer.enabled ? 'text-analog-accent' : 'text-analog-secondary'}`} />
+            <ToggleSwitch
+              size="sm"
+              checked={speedTrainer.enabled}
+              onChange={onToggleSpeedTrainer}
+              label="Toggle Speed Trainer"
+            />
+          </button>
+        </div>
       </div>
 
       {/* Center: Tape Transport Controls with Large Circular Play Button */}
-      <div className="flex items-center space-x-2.5">
+      <div className="flex items-center justify-center space-x-2 sm:space-x-2.5">
         {/* Reset / Loop */}
         <button
           onClick={onRestart}
@@ -92,7 +117,7 @@ export const FloatingTransportBar: React.FC<FloatingTransportBarProps> = ({
         {/* Big Circular Orange Play / Pause Button */}
         <button
           onClick={onTogglePlay}
-          className="w-12 h-12 rounded-full bg-analog-accent text-white flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
+          className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-analog-accent text-white flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
           title="Play / Pause (Spacebar)"
         >
           {isPlaying ? (
@@ -130,8 +155,8 @@ export const FloatingTransportBar: React.FC<FloatingTransportBarProps> = ({
         </button>
       </div>
 
-      {/* Right: Speed Trainer Pill matching reference UI */}
-      <div className="flex items-center space-x-2">
+      {/* Right: Speed Trainer Pill (shown on sm+ desktop/tablet) */}
+      <div className="hidden sm:flex items-center space-x-2">
         <button
           type="button"
           onClick={onToggleSpeedTrainer}
