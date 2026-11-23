@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Music2, Sliders, BarChart2, Plus, Guitar, BellRing, ChevronDown, Trash2 } from 'lucide-react';
 import { AudioSettings, ChordMode } from '@/types/strum';
+import { ToggleSwitch } from './ToggleSwitch';
 
 const ALL_CHORDS = ['G', 'C', 'D', 'Em', 'Am', 'E', 'A', 'F', 'Dm'];
 
@@ -57,22 +58,32 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
           </div>
 
           {/* Segmented Mode Switcher */}
-          <div className="flex items-center p-0.5 rounded-lg bg-analog-bg border border-analog-border">
+          <div
+            role="radiogroup"
+            aria-label="Chord playback mode"
+            className="flex items-center p-1 rounded-xl bg-analog-bg/90 border border-analog-border shadow-inner"
+          >
             <button
+              type="button"
+              role="radio"
+              aria-checked={chordMode === 'single'}
               onClick={() => onChordModeChange('single')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-display font-bold transition cursor-pointer ${
+              className={`px-3 py-1 rounded-lg text-[11px] font-display font-bold transition-all cursor-pointer ${
                 chordMode === 'single'
-                  ? 'bg-analog-accent text-white shadow-2xs'
+                  ? 'bg-analog-accent text-white shadow-2xs font-black'
                   : 'text-analog-secondary hover:text-analog-primary'
               }`}
             >
               Single
             </button>
             <button
+              type="button"
+              role="radio"
+              aria-checked={chordMode === 'progression'}
               onClick={() => onChordModeChange('progression')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-display font-bold transition cursor-pointer ${
+              className={`px-3 py-1 rounded-lg text-[11px] font-display font-bold transition-all cursor-pointer ${
                 chordMode === 'progression'
-                  ? 'bg-analog-accent text-white shadow-2xs'
+                  ? 'bg-analog-accent text-white shadow-2xs font-black'
                   : 'text-analog-secondary hover:text-analog-primary'
               }`}
             >
@@ -219,23 +230,17 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
             <span className="w-16 font-sans text-xs font-medium text-analog-primary">Guitar</span>
 
             {/* Orange Toggle Switch */}
-            <button
-              onClick={() =>
+            <ToggleSwitch
+              size="md"
+              checked={!audioSettings.isGuitarMuted}
+              onChange={(enabled) =>
                 onAudioSettingsChange({
                   ...audioSettings,
-                  isGuitarMuted: !audioSettings.isGuitarMuted,
+                  isGuitarMuted: !enabled,
                 })
               }
-              className={`w-9 h-5 rounded-full transition-colors relative cursor-pointer shrink-0 ${
-                !audioSettings.isGuitarMuted ? 'bg-analog-accent' : 'bg-analog-border'
-              }`}
-            >
-              <div
-                className={`w-3.5 h-3.5 rounded-full bg-white absolute top-0.5 transition-transform ${
-                  !audioSettings.isGuitarMuted ? 'left-4.5' : 'left-1'
-                }`}
-              />
-            </button>
+              label={audioSettings.isGuitarMuted ? 'Unmute Guitar sound' : 'Mute Guitar sound'}
+            />
 
             {/* Slider */}
             <input
@@ -266,23 +271,17 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
             <span className="w-16 font-sans text-xs font-medium text-analog-primary">Metronome</span>
 
             {/* Orange Toggle Switch */}
-            <button
-              onClick={() =>
+            <ToggleSwitch
+              size="md"
+              checked={!audioSettings.isMetronomeMuted}
+              onChange={(enabled) =>
                 onAudioSettingsChange({
                   ...audioSettings,
-                  isMetronomeMuted: !audioSettings.isMetronomeMuted,
+                  isMetronomeMuted: !enabled,
                 })
               }
-              className={`w-9 h-5 rounded-full transition-colors relative cursor-pointer shrink-0 ${
-                !audioSettings.isMetronomeMuted ? 'bg-analog-accent' : 'bg-analog-border'
-              }`}
-            >
-              <div
-                className={`w-3.5 h-3.5 rounded-full bg-white absolute top-0.5 transition-transform ${
-                  !audioSettings.isMetronomeMuted ? 'left-4.5' : 'left-1'
-                }`}
-              />
-            </button>
+              label={audioSettings.isMetronomeMuted ? 'Unmute Metronome click' : 'Mute Metronome click'}
+            />
 
             {/* Slider */}
             <input
@@ -333,23 +332,17 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
           </div>
 
           {/* Orange Toggle Switch */}
-          <button
-            onClick={() =>
+          <ToggleSwitch
+            size="md"
+            checked={audioSettings.countInEnabled}
+            onChange={(enabled) =>
               onAudioSettingsChange({
                 ...audioSettings,
-                countInEnabled: !audioSettings.countInEnabled,
+                countInEnabled: enabled,
               })
             }
-            className={`w-9 h-5 rounded-full transition-colors relative cursor-pointer shrink-0 ${
-              audioSettings.countInEnabled ? 'bg-analog-accent' : 'bg-analog-border'
-            }`}
-          >
-            <div
-              className={`w-3.5 h-3.5 rounded-full bg-white absolute top-0.5 transition-transform ${
-                audioSettings.countInEnabled ? 'left-4.5' : 'left-1'
-              }`}
-            />
-          </button>
+            label={audioSettings.countInEnabled ? 'Disable Pre-Roll Count-In' : 'Enable Pre-Roll Count-In'}
+          />
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { Sidebar, NavigationTab } from '@/components/navigation/Sidebar';
+import { ThemeToggleCapsule } from '@/components/analog/ThemeToggleCapsule';
 import { PracticeStudio } from '@/components/views/PracticeStudio';
 import { PatternLibraryView } from '@/components/views/PatternLibraryView';
 import { ChordExplorerView } from '@/components/views/ChordExplorerView';
@@ -527,31 +528,11 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Capsule Sun / Moon theme toggle button */}
-          <button
-            onClick={handleToggleTheme}
-            className="flex items-center space-x-1 p-1 bg-analog-surface border border-analog-border rounded-full shadow-2xs transition cursor-pointer hover:border-analog-secondary"
-            title="Toggle Light / Dark mode"
-          >
-            <div
-              className={`p-1.5 rounded-full transition ${
-                !isDarkMode
-                  ? 'bg-analog-accent text-white shadow-xs'
-                  : 'text-analog-secondary'
-              }`}
-            >
-              <Sun className="w-3.5 h-3.5" />
-            </div>
-            <div
-              className={`p-1.5 rounded-full transition ${
-                isDarkMode
-                  ? 'bg-analog-accent text-white shadow-xs'
-                  : 'text-analog-secondary'
-              }`}
-            >
-              <Moon className="w-3.5 h-3.5" />
-            </div>
-          </button>
+          {/* Capsule Sun / Moon theme toggle button matching reference UI */}
+          <ThemeToggleCapsule
+            isDarkMode={isDarkMode}
+            onToggleTheme={handleToggleTheme}
+          />
         </header>
 
         {/* View Content Port */}

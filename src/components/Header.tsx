@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sun, Moon, HelpCircle, Music2, ArrowDown, ArrowUp, Ghost, VolumeX, X } from 'lucide-react';
+import { ThemeToggleCapsule } from '@/components/analog/ThemeToggleCapsule';
 
 interface HeaderProps {
   isDarkMode: boolean;
@@ -47,15 +48,10 @@ export const Header: React.FC<HeaderProps> = ({ isDarkMode, onToggleTheme }) => 
           </motion.button>
 
           {/* Dark / Light Mode Toggle */}
-          <motion.button
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={onToggleTheme}
-            className="p-2 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition cursor-pointer"
-            title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          >
-            {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-sky-400" />}
-          </motion.button>
+          <ThemeToggleCapsule
+            isDarkMode={isDarkMode}
+            onToggleTheme={onToggleTheme}
+          />
         </div>
       </header>
 

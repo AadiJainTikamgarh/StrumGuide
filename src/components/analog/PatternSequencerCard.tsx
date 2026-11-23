@@ -77,10 +77,13 @@ export const PatternSequencerCard: React.FC<PatternSequencerCardProps> = ({
         <div className="flex items-center space-x-2">
           {/* Edit Pill */}
           <button
+            type="button"
+            role="switch"
+            aria-checked={isEditing}
             onClick={() => setIsEditing(!isEditing)}
-            className={`px-3 py-1 rounded-full border font-display text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer ${
+            className={`px-3 py-1 rounded-full border font-display text-xs font-bold flex items-center space-x-1.5 transition-all select-none cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-analog-accent ${
               isEditing
-                ? 'border-analog-accent bg-analog-accent text-white shadow-2xs'
+                ? 'border-analog-accent bg-analog-accent text-white shadow-xs'
                 : 'border-analog-accent/40 bg-analog-accent/10 text-analog-accent hover:bg-analog-accent hover:text-white'
             }`}
             title="Toggle pattern editing mode"
@@ -155,29 +158,49 @@ export const PatternSequencerCard: React.FC<PatternSequencerCardProps> = ({
       {/* Main Sequencer Workspace: Left Subdivision Toggles + Center Slots + Right Legend */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center pt-4">
         {/* Left: Stacked Subdivision Toggles (2 cols) */}
-        <div className="lg:col-span-2 flex flex-col space-y-2">
+        <div
+          role="radiogroup"
+          aria-label="Subdivision rhythm timing"
+          className="lg:col-span-2 flex flex-col space-y-2"
+        >
           <button
+            type="button"
+            role="radio"
+            aria-checked={subdivision === '8th'}
             onClick={() => onSubdivisionChange('8th')}
-            className={`px-3 py-2 rounded-xl border text-xs font-display font-bold flex items-center space-x-1.5 transition cursor-pointer ${
+            className={`px-3 py-2 rounded-xl border text-xs font-display font-bold flex items-center justify-between transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-analog-accent ${
               subdivision === '8th'
-                ? 'border-analog-accent text-analog-accent bg-analog-accent/10 shadow-2xs'
-                : 'border-analog-border text-analog-secondary bg-analog-bg hover:text-analog-primary'
+                ? 'border-analog-accent text-analog-accent bg-analog-accent/10 shadow-xs'
+                : 'border-analog-border text-analog-secondary bg-analog-bg hover:text-analog-primary hover:border-analog-secondary/60'
             }`}
           >
-            <span>↓↓</span>
-            <span>8th Notes</span>
+            <div className="flex items-center space-x-1.5">
+              <span className="font-mono text-analog-accent">↓↓</span>
+              <span>8th Notes</span>
+            </div>
+            {subdivision === '8th' && (
+              <span className="w-1.5 h-1.5 rounded-full bg-analog-accent" />
+            )}
           </button>
 
           <button
+            type="button"
+            role="radio"
+            aria-checked={subdivision === '16th'}
             onClick={() => onSubdivisionChange('16th')}
-            className={`px-3 py-2 rounded-xl border text-xs font-display font-bold flex items-center space-x-1.5 transition cursor-pointer ${
+            className={`px-3 py-2 rounded-xl border text-xs font-display font-bold flex items-center justify-between transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-analog-accent ${
               subdivision === '16th'
-                ? 'border-analog-accent text-analog-accent bg-analog-accent/10 shadow-2xs'
-                : 'border-analog-border text-analog-secondary bg-analog-bg hover:text-analog-primary'
+                ? 'border-analog-accent text-analog-accent bg-analog-accent/10 shadow-xs'
+                : 'border-analog-border text-analog-secondary bg-analog-bg hover:text-analog-primary hover:border-analog-secondary/60'
             }`}
           >
-            <span>↓↓↓↓</span>
-            <span>16th Notes</span>
+            <div className="flex items-center space-x-1.5">
+              <span className="font-mono text-analog-accent">↓↓↓↓</span>
+              <span>16th Notes</span>
+            </div>
+            {subdivision === '16th' && (
+              <span className="w-1.5 h-1.5 rounded-full bg-analog-accent" />
+            )}
           </button>
         </div>
 

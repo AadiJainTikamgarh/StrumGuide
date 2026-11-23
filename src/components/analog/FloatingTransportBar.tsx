@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { StrumPattern, SpeedTrainerConfig } from '@/types/strum';
 import { PRESET_PATTERNS } from '@/constants/presets';
+import { ToggleSwitch } from './ToggleSwitch';
 
 interface FloatingTransportBarProps {
   currentPattern: StrumPattern;
@@ -112,42 +113,45 @@ export const FloatingTransportBar: React.FC<FloatingTransportBarProps> = ({
         {/* Repeat Loop Toggle */}
         <button
           onClick={onToggleLoop}
-          className={`p-2 rounded-xl transition cursor-pointer ${
+          role="switch"
+          aria-checked={loopEnabled}
+          aria-label="Toggle continuous loop"
+          className={`p-2 rounded-xl transition-all cursor-pointer relative ${
             loopEnabled
-              ? 'text-analog-accent bg-analog-accent/10'
-              : 'text-analog-secondary hover:text-analog-primary hover:bg-analog-elevated'
+              ? 'text-analog-accent bg-analog-accent/15 border border-analog-accent/40 shadow-2xs font-bold'
+              : 'text-analog-secondary hover:text-analog-primary hover:bg-analog-elevated border border-transparent'
           }`}
-          title="Continuous Loop"
+          title={loopEnabled ? 'Continuous Loop Active - Click to disable' : 'Click to enable Continuous Loop'}
         >
           <Repeat className="w-4 h-4" />
+          {loopEnabled && (
+            <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-analog-accent" />
+          )}
         </button>
       </div>
 
-      {/* Right: Speed Trainer Pill */}
+      {/* Right: Speed Trainer Pill matching reference UI */}
       <div className="flex items-center space-x-2">
         <button
+          type="button"
           onClick={onToggleSpeedTrainer}
-          className={`px-3 py-1.5 rounded-xl border flex items-center space-x-2 font-display text-xs font-bold transition cursor-pointer ${
+          className={`px-3 py-1.5 rounded-xl border flex items-center space-x-2.5 font-display text-xs font-bold transition-all cursor-pointer select-none ${
             speedTrainer.enabled
-              ? 'bg-analog-accent/10 border-analog-accent text-analog-accent'
-              : 'bg-analog-bg border-analog-border text-analog-secondary hover:text-analog-primary'
+              ? 'bg-analog-accent/10 border-analog-accent/60 text-analog-accent shadow-2xs'
+              : 'bg-analog-bg border-analog-border text-analog-secondary hover:text-analog-primary hover:border-analog-secondary/60'
           }`}
+          title="Toggle Speed Trainer (gradually increases tempo every 2 bars)"
         >
-          <Rocket className="w-3.5 h-3.5" />
-          <span>Speed Trainer</span>
+          <Rocket className={`w-3.5 h-3.5 transition-colors ${speedTrainer.enabled ? 'text-analog-accent' : 'text-analog-secondary'}`} />
+          <span className="font-display text-xs font-bold">Speed Trainer</span>
 
           {/* Toggle Switch */}
-          <div
-            className={`w-7 h-4 rounded-full transition-colors relative shrink-0 ${
-              speedTrainer.enabled ? 'bg-analog-accent' : 'bg-analog-border'
-            }`}
-          >
-            <div
-              className={`w-3 h-3 rounded-full bg-white absolute top-0.5 transition-transform ${
-                speedTrainer.enabled ? 'left-3.5' : 'left-0.5'
-              }`}
-            />
-          </div>
+          <ToggleSwitch
+            size="sm"
+            checked={speedTrainer.enabled}
+            onChange={onToggleSpeedTrainer}
+            label="Toggle Speed Trainer"
+          />
         </button>
       </div>
     </div>

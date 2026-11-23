@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Sliders, Sun, Moon, Keyboard, Cpu } from 'lucide-react';
+import { Sliders, Keyboard, Cpu } from 'lucide-react';
+import { ThemeToggleCapsule } from '@/components/analog/ThemeToggleCapsule';
 
 interface SettingsViewProps {
   isDarkMode: boolean;
@@ -54,22 +55,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               </span>
             </div>
 
-            <button
-              onClick={onToggleTheme}
-              className="px-3.5 py-2 rounded border border-analog-border bg-analog-surface hover:bg-analog-elevated text-analog-primary font-display text-xs font-bold flex items-center space-x-2 transition cursor-pointer"
-            >
-              {isDarkMode ? (
-                <>
-                  <Sun className="w-4 h-4 text-analog-accent" />
-                  <span>LIGHT THEME</span>
-                </>
-              ) : (
-                <>
-                  <Moon className="w-4 h-4 text-analog-secondary" />
-                  <span>DARK THEME</span>
-                </>
-              )}
-            </button>
+            <ThemeToggleCapsule
+              isDarkMode={isDarkMode}
+              onToggleTheme={onToggleTheme}
+            />
           </div>
 
           {/* Pre-roll count-in preference */}
@@ -83,19 +72,33 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               </span>
             </div>
 
-            <div className="flex items-center border border-analog-border rounded bg-analog-surface overflow-hidden font-mono text-xs">
+            <div
+              role="radiogroup"
+              aria-label="Default count-in beats"
+              className="flex items-center p-1 rounded-xl bg-analog-surface border border-analog-border shadow-inner font-mono text-xs"
+            >
               <button
+                type="button"
+                role="radio"
+                aria-checked={countInBeats === 3}
                 onClick={() => onCountInBeatsChange(3)}
-                className={`px-3 py-1 font-bold ${
-                  countInBeats === 3 ? 'bg-analog-accent text-white' : 'text-analog-secondary hover:text-analog-primary'
+                className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                  countInBeats === 3
+                    ? 'bg-analog-accent text-white shadow-2xs font-black'
+                    : 'text-analog-secondary hover:text-analog-primary'
                 }`}
               >
                 3 BEATS
               </button>
               <button
+                type="button"
+                role="radio"
+                aria-checked={countInBeats === 4}
                 onClick={() => onCountInBeatsChange(4)}
-                className={`px-3 py-1 font-bold ${
-                  countInBeats === 4 ? 'bg-analog-accent text-white' : 'text-analog-secondary hover:text-analog-primary'
+                className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                  countInBeats === 4
+                    ? 'bg-analog-accent text-white shadow-2xs font-black'
+                    : 'text-analog-secondary hover:text-analog-primary'
                 }`}
               >
                 4 BEATS
