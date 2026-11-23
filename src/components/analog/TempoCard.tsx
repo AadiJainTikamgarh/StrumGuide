@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { Sliders, ChevronDown, Radio } from 'lucide-react';
 import { TimeSignature, Subdivision } from '@/types/strum';
 
@@ -23,41 +23,165 @@ export const TempoCard: React.FC<TempoCardProps> = ({
   onTimeSignatureChange,
   onSubdivisionChange,
 }) => {
+  const knobRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const startYRef = useRef(0);
-  const startValRef = useRef(bpm);
+  const dragStartRef = useRef<{
+    startX: number;
+    startY: number;
+    startBpm: number;
+    centerX: number;
+    centerY: number;
+  }>({
+    startX: 0,
+    startY: 0,
+    startBpm: bpm,
+    centerX: 0,
+    centerY: 0,
+  });
 
-  // Rotary angle: -135deg to +135deg
-  const angle = ((bpm - 40) / (240 - 40)) * 270 - 135;
+  // Rotary angle: -135deg (at 40 BPM) to +135deg (at 240 BPM) -> 270 deg span
+  const angle = Math.min(135, Math.max(-135, ((bpm - 40) / (240 - 40)) * 270 - 135));
+
+  // Pointer move handler attached globally to window during active drag
+  const handlePointerMove = useCallback(
+    (e: PointerEvent) => {
+      if (!isDragging) return;
+
+      const { startX, startY, startBpm, centerX, centerY } = dragStartRef.current;
+
+      // 1. Check if dragging circularly around the center of the knob
+      const distFromCenter = Math.hypot(e.clientX - centerX, e.clientY - centerY);
+      
+      let nextBpm = startBpm;
+
+      if (distFromCenter > 25 && distFromCenter < 180) {
+        // Circular angle tracking
+        // Angle in degrees from top (0 = 12 o'clock, clockwise positive)
+        let deg = Math.atan2(e.clientX - centerX, -(e.clientY - centerY)) * (180 / Math.PI);
+        // Normalize deg to -135 to +135 range
+        if (deg > 180) deg -= 360;
+        
+        // Clamp dead-zone at bottom (-180 to -135 and +135 to +180)
+        if (deg < -135 && deg > -175) deg = -135;
+        else if (deg > 135 && deg < 175) deg = 135;
+        
+        if (deg >= -135 && deg <= 135) {
+          const ratio = (deg + 135) / 270;
+          nextBpm = Math.round(40 + ratio * (240 - 40));
+        } else {
+          // In the dead zone at the bottom, use vertical linear delta fallback
+          const deltaY = startY - e.clientY;
+          const deltaX = e.clientX - startX;
+          const combinedDelta = deltaY * 1.0 + deltaX * 0.7;
+          const pxPerBpm = e.shiftKey ? 8 : 2.5;
+          const step = Math.round(combinedDelta / pxPerBpm);
+          nextBpm = startBpm + step;
+        }
+      } else {
+        // Linear vertical/diagonal drag (standard DAW dial interaction)
+        const deltaY = startY - e.clientY; // upward drag increases
+        const deltaX = e.clientX - startX; // rightward drag increases
+        const combinedDelta = deltaY * 1.0 + deltaX * 0.7;
+        const pxPerBpm = e.shiftKey ? 8 : 2.5;
+        const step = Math.round(combinedDelta / pxPerBpm);
+        nextBpm = startBpm + step;
+      }
+
+      nextBpm = Math.min(240, Math.max(40, nextBpm));
+      if (nextBpm !== bpm) {
+        onBpmChange(nextBpm);
+      }
+    },
+    [isDragging, bpm, onBpmChange]
+  );
+
+  const handlePointerUp = useCallback(() => {
+    setIsDragging(false);
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  }, []);
+
+  // Register global window listeners when dragging starts
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('pointermove', handlePointerMove);
+      window.addEventListener('pointerup', handlePointerUp);
+      window.addEventListener('pointercancel', handlePointerUp);
+      document.body.style.cursor = 'ns-resize';
+      document.body.style.userSelect = 'none';
+
+      return () => {
+        window.removeEventListener('pointermove', handlePointerMove);
+        window.removeEventListener('pointerup', handlePointerUp);
+        window.removeEventListener('pointercancel', handlePointerUp);
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+      };
+    }
+  }, [isDragging, handlePointerMove, handlePointerUp]);
 
   const handlePointerDown = (e: React.PointerEvent) => {
+    e.preventDefault();
+    if (e.button !== 0) return; // Only primary mouse button
+
+    const rect = knobRef.current?.getBoundingClientRect();
+    const centerX = rect ? rect.left + rect.width / 2 : e.clientX;
+    const centerY = rect ? rect.top + rect.height / 2 : e.clientY;
+
+    dragStartRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startBpm: bpm,
+      centerX,
+      centerY,
+    };
+
     setIsDragging(true);
-    startYRef.current = e.clientY;
-    startValRef.current = bpm;
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
   };
 
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging) return;
-    const deltaY = startYRef.current - e.clientY;
-    const step = Math.round((deltaY / 180) * 200);
-    const nextVal = Math.min(240, Math.max(40, startValRef.current + step));
-    if (nextVal !== bpm) onBpmChange(nextVal);
+  // Mouse wheel scroll support (+/- 1 BPM, or +/- 5 with Shift)
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const step = e.shiftKey ? 5 : 1;
+    const delta = e.deltaY < 0 ? step : -step;
+    onBpmChange(Math.min(240, Math.max(40, bpm + delta)));
   };
 
-  const handlePointerUp = (e: React.PointerEvent) => {
-    setIsDragging(false);
-    try {
-      (e.target as HTMLElement).releasePointerCapture(e.pointerId);
-    } catch {}
+  // Keyboard accessibility
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    const step = e.shiftKey ? 5 : 1;
+    if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      onBpmChange(Math.min(240, bpm + step));
+    } else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      onBpmChange(Math.max(40, bpm - step));
+    } else if (e.key === 'PageUp') {
+      e.preventDefault();
+      onBpmChange(Math.min(240, bpm + 10));
+    } else if (e.key === 'PageDown') {
+      e.preventDefault();
+      onBpmChange(Math.max(40, bpm - 10));
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      onBpmChange(40);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      onBpmChange(240);
+    }
   };
 
   const adjustBy = (delta: number) => {
     onBpmChange(Math.min(240, Math.max(40, bpm + delta)));
   };
 
+  // Static graduation marks around dial perimeter (from -135deg to +135deg)
+  const RADIAL_TICKS = [
+    -135, -120, -105, -90, -75, -60, -45, -30, -15, 0, 15, 30, 45, 60, 75, 90, 105, 120, 135,
+  ];
+
   return (
-    <div className="rounded-2xl border border-analog-border bg-analog-surface p-5 shadow-xs flex flex-col justify-between">
+    <div className="rounded-2xl border border-analog-border bg-analog-surface p-5 shadow-xs flex flex-col justify-between select-none">
       {/* Card Header */}
       <div className="flex items-center space-x-2 text-analog-primary mb-3">
         <Sliders className="w-4 h-4 text-analog-secondary" />
@@ -67,7 +191,7 @@ export const TempoCard: React.FC<TempoCardProps> = ({
       {/* Main Instrument Cluster */}
       <div className="flex items-center justify-between gap-3">
         {/* BPM Big Number Display */}
-        <div className="flex flex-col">
+        <div className="flex flex-col min-w-[70px]">
           <span className="font-display text-4xl font-black text-analog-primary leading-none tracking-tight">
             {bpm}
           </span>
@@ -76,44 +200,86 @@ export const TempoCard: React.FC<TempoCardProps> = ({
           </span>
         </div>
 
-        {/* Brushed Metallic Rotary Knob */}
+        {/* Brushed Metallic Rotary Dial */}
         <div className="relative flex flex-col items-center">
           <div
+            ref={knobRef}
+            tabIndex={0}
+            role="slider"
+            aria-label="Tempo BPM Dial"
+            aria-valuemin={40}
+            aria-valuemax={240}
+            aria-valuenow={bpm}
             onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            className={`w-20 h-20 rounded-full cursor-ns-resize touch-none select-none transition-shadow relative flex items-center justify-center ${
-              isDragging ? 'ring-2 ring-analog-accent shadow-md' : 'shadow-md hover:border-analog-accent/40'
+            onWheel={handleWheel}
+            onKeyDown={handleKeyDown}
+            onDoubleClick={() => onBpmChange(90)}
+            className={`w-20 h-20 rounded-full cursor-ns-resize touch-none select-none relative flex items-center justify-center transition-shadow outline-none ${
+              isDragging
+                ? 'ring-2 ring-analog-accent shadow-md scale-[1.02]'
+                : 'shadow-md hover:border-analog-accent/50 focus-visible:ring-2 focus-visible:ring-analog-accent'
             }`}
             style={{
               background: 'radial-gradient(circle at 35% 35%, #FFFFFF, var(--analog-border))',
               border: '2px solid var(--analog-border)',
             }}
-            title="Drag up or down to set tempo"
+            title="Drag up/down, rotate, or scroll to adjust BPM. Double click to reset."
           >
-            {/* Outer ring */}
-            <div className="absolute inset-1.5 rounded-full border border-analog-secondary/30 pointer-events-none" />
+            {/* Outer radial graduation ticks */}
+            <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+              {RADIAL_TICKS.map((tickAngle) => {
+                const isActive = tickAngle <= angle;
+                const isMajor = tickAngle % 45 === 0 || tickAngle === 0;
+                return (
+                  <div
+                    key={tickAngle}
+                    className="absolute"
+                    style={{
+                      transform: `rotate(${tickAngle}deg) translateY(-37px)`,
+                    }}
+                  >
+                    <div
+                      className={`rounded-full transition-colors ${
+                        isActive
+                          ? 'bg-analog-accent'
+                          : 'bg-analog-border/80'
+                      }`}
+                      style={{
+                        width: isMajor ? '2px' : '1.5px',
+                        height: isMajor ? '5px' : '3px',
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
 
-            {/* Rotating Needle / Line Indicator */}
+            {/* Inner machined bezel line */}
+            <div className="absolute inset-2.5 rounded-full border border-analog-secondary/25 pointer-events-none" />
+
+            {/* Rotating Orange Needle / Line Indicator */}
             <div
-              className="absolute inset-0 flex items-start justify-center pt-1.5 pointer-events-none"
+              className="absolute inset-0 flex items-start justify-center pt-2 pointer-events-none"
               style={{
                 transform: `rotate(${angle}deg)`,
                 transformOrigin: 'center center',
-                transition: isDragging ? 'none' : 'transform 0.08s ease-out',
+                transition: isDragging ? 'none' : 'transform 0.08s cubic-bezier(0.2, 0, 0, 1)',
               }}
             >
-              <div className="w-1 h-3 rounded-full bg-analog-accent" />
+              <div className="w-1.5 h-3.5 rounded-full bg-analog-accent shadow-xs" />
             </div>
 
             {/* Brushed metallic center cap */}
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-analog-surface to-analog-elevated border border-analog-border pointer-events-none" />
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-analog-surface to-analog-elevated border border-analog-border pointer-events-none shadow-2xs flex items-center justify-center">
+              <div className="w-2.5 h-2.5 rounded-full bg-analog-secondary/20 border border-analog-border/50" />
+            </div>
           </div>
 
           {/* Tap Tempo Button underneath */}
           <button
             onClick={onTapTempo}
             className="mt-2.5 px-3 py-1 rounded-full border border-analog-border bg-analog-bg hover:bg-analog-elevated active:bg-analog-accent active:text-white text-analog-primary font-display text-[10px] font-bold tracking-wider flex items-center space-x-1 shadow-2xs transition cursor-pointer"
+            title="Tap tempo"
           >
             <Radio className="w-2.5 h-2.5 text-analog-accent" />
             <span>Tap</span>
