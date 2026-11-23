@@ -223,87 +223,99 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
           <h3 className="font-display text-sm font-bold tracking-tight">Audio Mix</h3>
         </div>
 
-        <div className="space-y-3">
-          {/* Guitar slider + toggle */}
-          <div className="flex items-center space-x-2 sm:space-x-3 text-xs">
-            <Guitar className="w-4 h-4 text-analog-secondary shrink-0" />
-            <span className="w-14 sm:w-16 font-sans text-xs font-medium text-analog-primary shrink-0">Guitar</span>
+        <div className="space-y-2.5">
+          {/* Channel 1: Guitar Acoustics */}
+          <div className="p-2.5 sm:p-3 rounded-xl bg-analog-bg/60 border border-analog-border/70 space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Guitar className="w-4 h-4 text-analog-secondary shrink-0" />
+                <span className="font-sans text-xs font-bold text-analog-primary">Guitar</span>
+              </div>
 
-            {/* Orange Toggle Switch */}
-            <ToggleSwitch
-              size="md"
-              checked={!audioSettings.isGuitarMuted}
-              onChange={(enabled) =>
-                onAudioSettingsChange({
-                  ...audioSettings,
-                  isGuitarMuted: !enabled,
-                })
-              }
-              label={audioSettings.isGuitarMuted ? 'Unmute Guitar sound' : 'Mute Guitar sound'}
-            />
+              {/* Orange Toggle Switch */}
+              <ToggleSwitch
+                size="md"
+                checked={!audioSettings.isGuitarMuted}
+                onChange={(enabled) =>
+                  onAudioSettingsChange({
+                    ...audioSettings,
+                    isGuitarMuted: !enabled,
+                  })
+                }
+                label={audioSettings.isGuitarMuted ? 'Unmute Guitar sound' : 'Mute Guitar sound'}
+              />
+            </div>
 
-            {/* Slider */}
-            <input
-              type="range"
-              min={0}
-              max={1}
-              step={0.01}
-              disabled={audioSettings.isGuitarMuted}
-              value={audioSettings.guitarVolume}
-              onChange={(e) =>
-                onAudioSettingsChange({
-                  ...audioSettings,
-                  guitarVolume: parseFloat(e.target.value),
-                })
-              }
-              className={`flex-1 min-w-[50px] sm:min-w-[60px] h-1.5 rounded-lg appearance-none cursor-pointer bg-analog-border accent-analog-accent ${
-                audioSettings.isGuitarMuted ? 'opacity-40' : ''
-              }`}
-            />
-            <span className="font-mono text-[10px] text-analog-secondary w-7 text-right shrink-0">
-              {audioSettings.isGuitarMuted ? '0%' : `${Math.round(audioSettings.guitarVolume * 100)}%`}
-            </span>
+            <div className="flex items-center space-x-2.5">
+              {/* Slider */}
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.01}
+                disabled={audioSettings.isGuitarMuted}
+                value={audioSettings.guitarVolume}
+                onChange={(e) =>
+                  onAudioSettingsChange({
+                    ...audioSettings,
+                    guitarVolume: parseFloat(e.target.value),
+                  })
+                }
+                className={`flex-1 h-1.5 rounded-lg appearance-none cursor-pointer bg-analog-border accent-analog-accent ${
+                  audioSettings.isGuitarMuted ? 'opacity-40' : ''
+                }`}
+              />
+              <span className="font-mono text-xs font-bold text-analog-secondary w-8 text-right shrink-0">
+                {audioSettings.isGuitarMuted ? '0%' : `${Math.round(audioSettings.guitarVolume * 100)}%`}
+              </span>
+            </div>
           </div>
 
-          {/* Metronome slider + toggle */}
-          <div className="flex items-center space-x-2 sm:space-x-3 text-xs">
-            <BellRing className="w-4 h-4 text-analog-secondary shrink-0" />
-            <span className="w-14 sm:w-16 font-sans text-xs font-medium text-analog-primary shrink-0">Metronome</span>
+          {/* Channel 2: Metronome Click */}
+          <div className="p-2.5 sm:p-3 rounded-xl bg-analog-bg/60 border border-analog-border/70 space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <BellRing className="w-4 h-4 text-analog-secondary shrink-0" />
+                <span className="font-sans text-xs font-bold text-analog-primary">Metronome</span>
+              </div>
 
-            {/* Orange Toggle Switch */}
-            <ToggleSwitch
-              size="md"
-              checked={!audioSettings.isMetronomeMuted}
-              onChange={(enabled) =>
-                onAudioSettingsChange({
-                  ...audioSettings,
-                  isMetronomeMuted: !enabled,
-                })
-              }
-              label={audioSettings.isMetronomeMuted ? 'Unmute Metronome click' : 'Mute Metronome click'}
-            />
+              {/* Orange Toggle Switch */}
+              <ToggleSwitch
+                size="md"
+                checked={!audioSettings.isMetronomeMuted}
+                onChange={(enabled) =>
+                  onAudioSettingsChange({
+                    ...audioSettings,
+                    isMetronomeMuted: !enabled,
+                  })
+                }
+                label={audioSettings.isMetronomeMuted ? 'Unmute Metronome click' : 'Mute Metronome click'}
+              />
+            </div>
 
-            {/* Slider */}
-            <input
-              type="range"
-              min={0}
-              max={1}
-              step={0.01}
-              disabled={audioSettings.isMetronomeMuted}
-              value={audioSettings.metronomeVolume}
-              onChange={(e) =>
-                onAudioSettingsChange({
-                  ...audioSettings,
-                  metronomeVolume: parseFloat(e.target.value),
-                })
-              }
-              className={`flex-1 min-w-[50px] sm:min-w-[60px] h-1.5 rounded-lg appearance-none cursor-pointer bg-analog-border accent-analog-accent ${
-                audioSettings.isMetronomeMuted ? 'opacity-40' : ''
-              }`}
-            />
-            <span className="font-mono text-[10px] text-analog-secondary w-7 text-right shrink-0">
-              {audioSettings.isMetronomeMuted ? '0%' : `${Math.round(audioSettings.metronomeVolume * 100)}%`}
-            </span>
+            <div className="flex items-center space-x-2.5">
+              {/* Slider */}
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.01}
+                disabled={audioSettings.isMetronomeMuted}
+                value={audioSettings.metronomeVolume}
+                onChange={(e) =>
+                  onAudioSettingsChange({
+                    ...audioSettings,
+                    metronomeVolume: parseFloat(e.target.value),
+                  })
+                }
+                className={`flex-1 h-1.5 rounded-lg appearance-none cursor-pointer bg-analog-border accent-analog-accent ${
+                  audioSettings.isMetronomeMuted ? 'opacity-40' : ''
+                }`}
+              />
+              <span className="font-mono text-xs font-bold text-analog-secondary w-8 text-right shrink-0">
+                {audioSettings.isMetronomeMuted ? '0%' : `${Math.round(audioSettings.metronomeVolume * 100)}%`}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -317,32 +329,35 @@ export const BottomControlsRow: React.FC<BottomControlsRowProps> = ({
           <h3 className="font-display text-sm font-bold tracking-tight">Count-In</h3>
         </div>
 
-        <div className="flex items-center justify-between gap-2">
+        <div className="p-2.5 sm:p-3 rounded-xl bg-analog-bg/60 border border-analog-border/70 flex items-center justify-between gap-3">
           {/* Beats Dropdown */}
           <div className="relative flex-1 min-w-0">
+            <span className="font-mono text-[9px] text-analog-secondary uppercase block mb-1">Lead-In</span>
             <select
               value={countInBeats}
               onChange={(e) => onCountInBeatsChange(Number(e.target.value) as 3 | 4)}
-              className="appearance-none w-full px-3 py-1.5 pr-6 rounded-xl bg-analog-bg border border-analog-border font-display text-xs font-bold text-analog-primary cursor-pointer truncate"
+              className="appearance-none w-full px-3 py-1.5 pr-6 rounded-lg bg-analog-bg border border-analog-border font-display text-xs font-bold text-analog-primary cursor-pointer truncate"
             >
               <option value={4}>4 Beats</option>
               <option value={3}>3 Beats</option>
             </select>
-            <ChevronDown className="w-3.5 h-3.5 text-analog-secondary absolute right-2 top-2.5 pointer-events-none" />
+            <ChevronDown className="w-3.5 h-3.5 text-analog-secondary absolute right-2 top-6 pointer-events-none" />
           </div>
 
           {/* Orange Toggle Switch */}
-          <ToggleSwitch
-            size="md"
-            checked={audioSettings.countInEnabled}
-            onChange={(enabled) =>
-              onAudioSettingsChange({
-                ...audioSettings,
-                countInEnabled: enabled,
-              })
-            }
-            label={audioSettings.countInEnabled ? 'Disable Pre-Roll Count-In' : 'Enable Pre-Roll Count-In'}
-          />
+          <div className="flex flex-col items-center justify-center pt-3">
+            <ToggleSwitch
+              size="md"
+              checked={audioSettings.countInEnabled}
+              onChange={(enabled) =>
+                onAudioSettingsChange({
+                  ...audioSettings,
+                  countInEnabled: enabled,
+                })
+              }
+              label={audioSettings.countInEnabled ? 'Disable Pre-Roll Count-In' : 'Enable Pre-Roll Count-In'}
+            />
+          </div>
         </div>
       </div>
     </div>
